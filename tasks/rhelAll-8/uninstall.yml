@@ -30,10 +30,10 @@
 
 - name: Remove audit rules
   ansible.builtin.file:
-    path: /etc/audit/rules.d/package_change.rules
+    path: "{{ log_forwarder_audit_rules_file }}"
     state: absent
   ignore_errors: true
-  notify: reload auditd
+  notify: reload audit rules
 
 - name: Remove Fluent Bit repository (RHEL 8)
   ansible.builtin.command: rm -f /etc/yum.repos.d/fluent-bit.repo

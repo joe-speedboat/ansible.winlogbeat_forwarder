@@ -5,7 +5,7 @@ galaxy_info:
   author: Joe Speedboat
   description: Forward Windows Event Logs and Linux journald/audit/security logs to Graylog
   company: Bitbull Open Source
-  license: MIT
+  license: GPL-3.0-or-later
   min_ansible_version: '2.14'
   platforms:
     - name: Windows
