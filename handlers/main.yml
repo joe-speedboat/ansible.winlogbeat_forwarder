@@ -28,6 +28,7 @@
 - name: reload audit rules
   ansible.builtin.command: augenrules --load
   changed_when: true
+  ignore_errors: true
   when:
     - not ansible_check_mode
     - ansible_os_family != 'Windows'
