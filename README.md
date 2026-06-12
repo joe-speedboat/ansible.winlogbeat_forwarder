@@ -1,4 +1,4 @@
-# ansible.log_forwarder / `joe-speedboat.log_forwarder`
+# Ansible Role: `joe-speedboat.log_forwarder`
 
 OS-independent Ansible role for forwarding Windows Event Logs and Linux logs to **Graylog**.
 
@@ -29,7 +29,10 @@ Create the matching inputs before deploying the role:
 | Windows Events | Beats | 5044 |
 | Linux Logs | GELF TCP | 12201 |
 
-**Important for the Beats input**: In the Graylog web UI, when creating or editing the Beats input, enable **«Do not add Beats type as prefix»**. Otherwise Graylog prefixes all field names with `winlogbeat_` (e.g. `winlogbeat_agent_hostname` instead of `agent_hostname`).
+**Important for the Beats input**: 
+  In the Graylog web UI, when creating or editing the Beats input,   
+  [X] **Do not add Beats type as prefix**  
+  Otherwise Graylog prefixes all field names with `winlogbeat_` (e.g. `winlogbeat_agent_hostname` instead of `agent_hostname`).
 
 ### Target Nodes
 
