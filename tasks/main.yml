@@ -2,12 +2,6 @@
 ---
 ######## START: Get playbooks to run ########
 
-# When the playbook uses gather_facts: false (e.g. for Rocky 8 python fix),
-# we need to gather facts before any fact-dependent condition.
-- name: Gather facts if playbook did not
-  ansible.builtin.setup:
-  when: ansible_facts.keys() | length == 0
-
 - name: Create rhelAll fact fallback
   set_fact:
     ansible_distribution_combine: dummy
@@ -22,10 +16,6 @@
 
 - name: fix ansible_python_interpreter, for Rocky and AlmaLinux, see lib/ansible/config/base.yml
   block:
-  - name: rhelClone v8
-    set_fact:
-      ansible_python_interpreter: /usr/bin/python3
-    when: ansible_distribution_major_version|int == 8
   - name: rhelClone v9
     set_fact:
       ansible_python_interpreter: /usr/bin/python3
@@ -39,7 +29,7 @@
 
 - name: find role directory  (awx aware)
   find:
-    paths:
+    paths: 
     - /runner/requirements_roles
     - "{{ lookup('env', 'PWD') }}/roles/{{role_path|basename}}/tasks"
     - "{{ lookup('env', 'HOME') }}/.ansible/roles/{{role_path|basename}}/tasks"
@@ -49,8 +39,8 @@
     - "/runner/requirements_roles/{{role_path|basename}}/tasks"
     recurse: no
     depth: 1
-    file_type: file
-    use_regex: no
+    file_type: file 
+    use_regex: no 
     patterns: main.yml
   delegate_to: localhost
   become: no
@@ -70,10 +60,10 @@
 - name: find all task files with numeric pattern
   find:
     paths: "{{ vars['task_dir_' + role_name|split('.')|last] }}"
-    recurse: yes
-    depth: 2
-    file_type: file
-    use_regex: yes
+    recurse: yes 
+    depth: 2 
+    file_type: file 
+    use_regex: yes 
     patterns: ['^[0-9]{2}_.*.yml$']
   delegate_to: localhost
   become: no
@@ -89,7 +79,7 @@
   no_log: True
 
 - name: sort and uniq
-  set_fact:
+  set_fact: 
     include_file_names: "{{ include_file_names | unique | sort }}"
 
 - name: show playbooks
@@ -104,7 +94,7 @@
 - name: "include tasks"
   include_tasks: "include-file.yml"
   loop_control:
-    loop_var: include_file_name
+    loop_var: include_file_name 
   with_items:
     - "{{ include_file_names }}"
 ######## END: Execution part ########
