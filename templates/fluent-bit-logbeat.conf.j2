@@ -139,6 +139,7 @@
     Name    modify
     Match   {{ log_forwarder_journal_tag }}
     Set     log_type journald
+    Add     hostname {{ ansible_hostname }}
 
 [FILTER]
     Name    modify
