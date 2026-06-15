@@ -268,6 +268,43 @@ The template dispatcher (`main.yml` + `include-file.yml`) discovers numbered tas
 
 ---
 
+## Graylog `source` / hostname consolidation
+
+Linux forwarding uses GELF TCP with:
+
+```text
+Gelf_Host_Key hostname
+```
+
+The role deliberately sets the `hostname` field on every Linux log stream before output:
+
+```text
+[FILTER]
+    Name    modify
+    Match   audit
+    Add     hostname ${HOSTNAME}
+
+[FILTER]
+    Name    modify
+    Match   security_files
+    Add     hostname ${HOSTNAME}
+
+[FILTER]
+    Name    modify
+    Match   journald
+    Add     hostname ${HOSTNAME}
+```
+
+`${HOSTNAME}` is resolved by Fluent Bit at service start. This is intentional:
+
+- **One source per host**: journald, auditd, and security-file records use the same Graylog `source` value.
+- **Short-hostname consistency**: Rocky/RHEL systems often return an FQDN for `hostname -f`, while Ubuntu lab images may return only a short name. `${HOSTNAME}` avoids mixing short names and FQDNs in Graylog aggregations.
+- **Rename-friendly**: if a host is renamed, restart Fluent Bit and the new source is used without re-running Ansible.
+
+Do not change one input to `{{ ansible_hostname }}` or `{{ ansible_fqdn }}` unless all inputs are changed deliberately and the Graylog `source` aggregation behavior is re-tested.
+
+---
+
 ## Handlers
 
 | Name | Action | Trigger |
@@ -351,6 +388,8 @@ The Graylog `source` field is set consistently across all Linux log types (journ
 | auth.log / secure | `source:<host> AND log_type:security_file` |
 | Windows Events | `source:<host> AND winlog_channel:Security AND log_type:winlogbeat` |
 
+`security_file` rows are emitted for files that exist and receive data. Minimal fresh templates may not yet have `/var/log/auth.log` or `/var/log/secure`; once the OS/syslog stack creates those files and writes auth records, Fluent Bit tails them with `log_type:security_file` and the same consolidated `source` value.
+
 **Cross-OS notes**:
 
 - **Package events** — Rocky/RHEL produces native `audit_type=SOFTWARE_UPDATE` records with `op=install\|remove\|update`, `sw="<pkg>-<version>"`. Ubuntu produces `audit_type=EXECVE` records from `apt-get`/`dpkg` with `package_action` and `package_name`. Both OS families normalize to the same `package_action`/`package_name` fields, so the portable query `log_type:auditd AND package_action:*` works everywhere.
@@ -375,14 +414,16 @@ The Graylog `source` field is set consistently across all Linux log types (journ
 
 ## Tested Platforms
 
-| Target | Collector | Graylog ingest verified |
+| Target | Collector | Verification |
 |---|---|---|
-| Windows Server 2022 | Winlogbeat 7.17 | ✅ |
-| Ubuntu 24.04 LTS | Fluent Bit | ✅ |
-| Ubuntu 26.04 LTS | Fluent Bit | ✅ |
-| Rocky Linux 8.10 | Fluent Bit | ✅ |
-| Rocky Linux 9.7 | Fluent Bit | ✅ |
-| Rocky Linux 10.1 | Fluent Bit | ✅ |
+| Windows Server 2022 | Winlogbeat 7.17 | Event forwarding verified with Graylog Beats input |
+| Ubuntu 24.04 LTS | Fluent Bit | Install, idempotence, service/config validation, journald Graylog ingest |
+| Ubuntu 26.04 LTS | Fluent Bit | Install, idempotence, service/config validation, journald Graylog ingest |
+| Rocky Linux 8.10 | Fluent Bit | Install, idempotence, service/config validation, journald Graylog ingest |
+| Rocky Linux 9.7 | Fluent Bit | Install, idempotence, service/config validation, journald + security_file Graylog ingest |
+| Rocky Linux 10.1 | Fluent Bit | Install, idempotence, service/config validation, journald + security_file Graylog ingest |
+
+Linux matrix re-verified on fresh lab VMs on 2026-06-15. The idempotence pass completed with `changed=0` for Ubuntu 24/26 and Rocky 8/9/10. Rendered Fluent Bit configs contained exactly three `Add hostname ${HOSTNAME}` filters (auditd, security_file, journald) plus `Gelf_Host_Key hostname`; Graylog returned short-hostname `source` values for the live verification marker.
 
 ---
 
