@@ -1,11 +1,12 @@
 ---
-# ██ Winlogbeat version — pinned to second-to-last 7.x release for clean upgrade testing
-# Graylog supports Winlogbeat 7.x only (NOT 8.x+).
-winlogbeat_version: '7.17.28'
-winlogbeat_download_url: "https://artifacts.elastic.co/downloads/beats/winlogbeat/winlogbeat-{{ winlogbeat_version }}-windows-x86_64.zip"
+# ██ Winlogbeat OSS version — latest tested OSS release for Apache 2.0 licensing
+winlogbeat_version: '9.4.2'
+winlogbeat_artifact_name: "winlogbeat-oss-{{ winlogbeat_version }}-windows-x86_64"
+winlogbeat_download_url: "https://artifacts.elastic.co/downloads/beats/winlogbeat/{{ winlogbeat_artifact_name }}.zip"
 winlogbeat_checksum:
-  '7.17.28': '0305cb51f27800af4df1d0120fd7de0487f42588f15cde44a311e52a48aec83f6037753db251944e32caab08a81361c1c444de440d302d081ebf6dcda4e26041'
-  '7.17.29': '14e50860130de17711142e5b12a4da2f9e9dd714d45dc3f16e94437264164424be1e5d01007e20ef14762b1adfb8c68abd3f2c76d339f29ba9e1fbe014a3fafd'
+  '7.17.28': 'f62297b195ed5e3328a77206ae19adf96081a8c385c5739831429ce9770c3be280095587bf814978a9664f180773bcf8063219be749d6fb258659e2be69afac5'
+  '7.17.29': '2262ee3fdae8bf88728ce0c630aafff141b873dc4d2c9eeef9dcdca64a174fba5ba9125f7ea898a34dcd352d63eba993e03941c4a1e1624e5cc24a2c8431bc53'
+  '9.4.2': 'a2ae67cbc8a6eed4c3c4e9360eaf437d465868d837e90426057260ac548139cf546082eb16249d760c9abe6b61243acee4507d7298396c77dcd9909dba9901a6'
 
 # ██ Installation paths (Windows)
 winlogbeat_install_root: 'C:\Program Files\Winlogbeat'

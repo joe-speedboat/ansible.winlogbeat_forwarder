@@ -26,7 +26,7 @@
 - name: Download Winlogbeat ZIP
   ansible.windows.win_get_url:
     url: '{{ winlogbeat_download_url }}'
-    dest: '{{ winlogbeat_download_dir }}\winlogbeat-{{ winlogbeat_version }}.zip'
+    dest: '{{ winlogbeat_download_dir }}\{{ winlogbeat_artifact_name }}.zip'
     checksum: "{{ winlogbeat_checksum[winlogbeat_version] | default('') }}"
     checksum_algorithm: sha512
   register: _wb_download
@@ -36,7 +36,7 @@
 
 - name: Extract Winlogbeat ZIP
   community.windows.win_unzip:
-    src: '{{ winlogbeat_download_dir }}\winlogbeat-{{ winlogbeat_version }}.zip'
+    src: '{{ winlogbeat_download_dir }}\{{ winlogbeat_artifact_name }}.zip'
     dest: '{{ winlogbeat_install_root }}'
     creates: '{{ winlogbeat_install_root }}\{{ winlogbeat_extract_folder }}\winlogbeat.exe'
 

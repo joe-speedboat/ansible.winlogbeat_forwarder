@@ -4,7 +4,7 @@ OS-independent Ansible role for forwarding Windows Event Logs and Linux logs to 
 
 | Target OS | Collector | Graylog input | Default port | Log sources |
 |---|---|---|---|---|
-| Windows Server | Winlogbeat 7.x | Beats | 5044 | Application, System, Security |
+| Windows Server | Winlogbeat OSS 9.x | Beats | 5044 | Application, System, Security |
 | Ubuntu 24/26 | Fluent Bit | GELF TCP | 12201 | journald, auditd, auth.log, nginx, apache2 |
 | Rocky/RHEL/Alma 8–10 | Fluent Bit | GELF TCP | 12201 | journald, auditd, secure, nginx, httpd |
 
@@ -112,9 +112,10 @@ The `log_forwarder_` prefix is used OS-wide; `winlogbeat_` variables apply to Wi
 |---|---|---|
 | `winlogbeat_graylog_host` | `graylog.example.com` | Graylog Beats input host |
 | `winlogbeat_graylog_port` | `5044` | Graylog Beats input port |
-| `winlogbeat_version` | `7.17.28` | Winlogbeat version (Graylog only supports 7.x) |
-| `winlogbeat_download_url` | computed | Download URL for Winlogbeat ZIP |
-| `winlogbeat_checksum` | dict (7.17.28, 7.17.29) | SHA512 checksums per version |
+| `winlogbeat_version` | `9.4.2` | Winlogbeat OSS version tested against Graylog Beats input |
+| `winlogbeat_artifact_name` | computed | Elastic OSS artifact basename, e.g. `winlogbeat-oss-9.4.2-windows-x86_64` |
+| `winlogbeat_download_url` | computed | Download URL for Winlogbeat OSS ZIP |
+| `winlogbeat_checksum` | dict (7.17.28, 7.17.29, 9.4.2) | SHA512 checksums per OSS version |
 
 ### Windows / Winlogbeat — Paths
 
@@ -318,11 +319,13 @@ Do not change one input to `{{ ansible_hostname }}` or `{{ ansible_fqdn }}` unle
 
 ## Winlogbeat Upgrades
 
-Winlogbeat is installed into versioned directories and exposed via a `current` junction:
+Winlogbeat OSS is installed into versioned directories and exposed via a `current` junction:
 
 ```yaml
-winlogbeat_version: '7.17.28'
+winlogbeat_version: '9.4.2'
 ```
+
+The role uses Elastic's OSS-only ZIP artifacts (`winlogbeat-oss-<version>-windows-x86_64.zip`) for Apache 2.0 licensing. The OSS ZIP still extracts to `winlogbeat-<version>-windows-x86_64`, so the same service scripts and junction-based installer workflow are used.
 
 Upgrade workflow:
 1. Stop service → extract ZIP → repoint `current` junction
@@ -418,12 +421,14 @@ The Graylog `source` field is set consistently across all Linux log types (journ
 
 | Target | Collector | Verification |
 |---|---|---|
-| Windows Server 2022 | Winlogbeat 7.17 | Event forwarding verified with Graylog Beats input |
+| Windows Server 2022 | Winlogbeat OSS 9.4.2 | Event forwarding verified with Graylog Beats input |
 | Ubuntu 24.04 LTS | Fluent Bit | Install, idempotence, service/config validation, journald Graylog ingest |
 | Ubuntu 26.04 LTS | Fluent Bit | Install, idempotence, service/config validation, journald Graylog ingest |
 | Rocky Linux 8.10 | Fluent Bit | Install, idempotence, service/config validation, journald Graylog ingest |
 | Rocky Linux 9.7 | Fluent Bit | Install, idempotence, service/config validation, journald + security_file Graylog ingest |
 | Rocky Linux 10.1 | Fluent Bit | Install, idempotence, service/config validation, journald + security_file Graylog ingest |
+
+Windows Server 2022 was re-verified with Winlogbeat OSS 9.4.2 on 2026-06-15: install/upgrade completed with the same service-script workflow, the service stayed `Running`/`Automatic`, and Graylog received an Application event from `source:win2201`.
 
 Linux matrix re-verified on fresh lab VMs on 2026-06-15. The idempotence pass completed with `changed=0` for Ubuntu 24/26 and Rocky 8/9/10. Rendered Fluent Bit configs contained exactly three `Add hostname ${HOSTNAME}` filters (auditd, security_file, journald) plus `Gelf_Host_Key hostname`; Graylog returned short-hostname `source` values for the live verification marker.
 
