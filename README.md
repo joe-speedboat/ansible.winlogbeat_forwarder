@@ -391,7 +391,7 @@ The Graylog `source` field is set consistently across all Linux log types (journ
 | Package (Rocky/RHEL) | `source:<host> AND audit_type:SOFTWARE_UPDATE AND package_action:*` |
 | Package (Ubuntu) | `source:<host> AND log_type:auditd AND (package_action:install OR package_action:remove)` |
 | auth.log / secure | `source:<host> AND log_type:security_file` |
-| Windows Events | `source:<host> AND winlog_channel:Security AND log_type:winlogbeat` |
+| Windows Events | `source:<host> AND winlog_channel:Security AND agent_type:winlogbeat` |
 
 `security_file` rows are emitted for files that exist and receive data. Minimal fresh templates may not yet have `/var/log/auth.log` or `/var/log/secure`; once the OS/syslog stack creates those files and writes auth records, Fluent Bit tails them with `log_type:security_file` and the same consolidated `source` value.
 

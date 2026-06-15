@@ -6,6 +6,10 @@
 
 - **Winlogbeat distribution**: Switch Windows downloads to Elastic's OSS-only Winlogbeat artifacts (`winlogbeat-oss-<version>-windows-x86_64.zip`) for Apache 2.0 licensing and update the default to the latest tested OSS release, `9.4.2`, while keeping the same extracted directory layout and service-script installer workflow. ([#10])
 
+### Documentation
+
+- **Graylog search**: Correct the Windows Events example query to use the lab-verified `agent_type:winlogbeat` discriminator instead of `log_type:winlogbeat`, because Windows events from `win2201` populate `agent_type` while `log_type` is not present in Graylog.
+
 ## [v1.0.1] — 2026-06-12
 
 ### Bugfixes
