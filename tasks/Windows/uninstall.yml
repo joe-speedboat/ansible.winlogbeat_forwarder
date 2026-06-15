@@ -22,10 +22,4 @@
     - "{{ winlogbeat_data_dir }}"
     - "{{ winlogbeat_log_dir }}"
     - "{{ winlogbeat_download_dir }}"
-
-- name: Remove Winlogbeat backup directory
-  ansible.windows.win_file:
-    path: "{{ winlogbeat_backup_path }}"
-    state: absent
-  ignore_errors: true
 ...

@@ -325,9 +325,11 @@ winlogbeat_version: '7.17.28'
 ```
 
 Upgrade workflow:
-1. Stop service → extract ZIP → backup previous installation
-2. Repoint `current` junction → deploy config → start service
-3. Clean up old versions beyond `winlogbeat_retention_versions`
+1. Stop service → extract ZIP → repoint `current` junction
+2. Deploy config → install service → start service
+3. Clean up old versions beyond `winlogbeat_retention_versions` (default: keep 3)
+4. Remove any legacy `backup` directory left by older role versions
+5. The old version folder remains intact until it exceeds retention — no separate backup copy is created
 
 ---
 

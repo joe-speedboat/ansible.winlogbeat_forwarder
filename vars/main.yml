@@ -4,7 +4,6 @@ winlogbeat_extract_folder: 'winlogbeat-{{ winlogbeat_version }}-windows-x86_64'
 winlogbeat_install_path: '{{ winlogbeat_install_root }}\current'
 winlogbeat_binary: '{{ winlogbeat_install_path }}\winlogbeat.exe'
 winlogbeat_config: '{{ winlogbeat_install_path }}\winlogbeat.yml'
-winlogbeat_backup_path: '{{ winlogbeat_install_root }}\backup'
 
 # Linux package and service maps
 pkg_rhel_fluent_bit:
