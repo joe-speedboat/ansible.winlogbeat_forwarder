@@ -131,13 +131,12 @@ The `log_forwarder_` prefix is used OS-wide; `winlogbeat_` variables apply to Wi
 | Variable | Default | Description |
 |---|---|---|
 | `winlogbeat_event_logs` | Application, System, Security | Event log channels (all events) |
-| `winlogbeat_node_name` | `{{ inventory_hostname }}` | Collector node identifier |
 | `winlogbeat_service_name` | `winlogbeat` | Windows service name |
 | `winlogbeat_service_state` | `started` | Desired service state |
 | `winlogbeat_service_enabled` | `true` | Auto-start on boot |
 | `winlogbeat_retention_versions` | `3` | Old versions retained during upgrades |
 | `winlogbeat_tags` | `[]` | Additional tags |
-| `winlogbeat_fields` | — | Additional fields (e.g. `env`, `datacenter`) |
+| `winlogbeat_fields` | — | Additional fields merged into `fields:` |
 
 ### Windows / Winlogbeat — Graylog Fields
 
@@ -146,9 +145,9 @@ The `log_forwarder_` prefix is used OS-wide; `winlogbeat_` variables apply to Wi
 | Field | Value | Description |
 |---|---|---|
 | `log_type` | `winlogbeat` | Identifies Windows events in Graylog |
-| `agent_type` | `{{ winlogbeat_node_name }}` | Collector node name |
-| `host` | `{{ winlogbeat_node_name }}` | Hostname in Graylog `source` |
-| `host_ip` | `{{ ansible_default_ipv4.address }}` | Host IP |
+| `journal_forwarder` | `"true"` | Portable marker to distinguish event sources across OS families |
+
+Optional additions can be supplied via `winlogbeat_fields`.
 
 ### Linux / Fluent Bit — Graylog Connection
 
@@ -391,7 +390,8 @@ The Graylog `source` field is set consistently across all Linux log types (journ
 | Package (Rocky/RHEL) | `source:<host> AND audit_type:SOFTWARE_UPDATE AND package_action:*` |
 | Package (Ubuntu) | `source:<host> AND log_type:auditd AND (package_action:install OR package_action:remove)` |
 | auth.log / secure | `source:<host> AND log_type:security_file` |
-| Windows Events | `source:<host> AND winlog_channel:Security AND agent_type:winlogbeat` |
+|| Windows Events | `source:<host> AND winlog_channel:Security` |
+|| Security event stream | `source:<host> AND winlog_channel:Security AND event_id:*` |
 
 `security_file` rows are emitted for files that exist and receive data. Minimal fresh templates may not yet have `/var/log/auth.log` or `/var/log/secure`; once the OS/syslog stack creates those files and writes auth records, Fluent Bit tails them with `log_type:security_file` and the same consolidated `source` value.
 
