@@ -29,7 +29,7 @@ winlogbeat_event_logs:
 
 # ██ Optional collector identity override
 # Set this only if you need a static collector ID across cloned images.
-# winlogbeat_node_name: "{{ inventory_hostname }}"
+# winlogbeat_node_name: "{{ inventory_hostname }}"  # comment out to force dynamic hostnames by default
 
 # ██ Service management (Windows)
 winlogbeat_service_name: winlogbeat
