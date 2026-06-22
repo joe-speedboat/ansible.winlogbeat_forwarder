@@ -1,5 +1,5 @@
 ---
-# ██ Winlogbeat OSS version — latest tested OSS release for Apache 2.0 licensing
+# Winlogbeat OSS version - latest tested OSS release for Apache 2.0 licensing
 winlogbeat_version: '9.4.2'
 winlogbeat_artifact_name: "winlogbeat-oss-{{ winlogbeat_version }}-windows-x86_64"
 winlogbeat_download_url: "https://artifacts.elastic.co/downloads/beats/winlogbeat/{{ winlogbeat_artifact_name }}.zip"
@@ -8,39 +8,91 @@ winlogbeat_checksum:
   '7.17.29': '2262ee3fdae8bf88728ce0c630aafff141b873dc4d2c9eeef9dcdca64a174fba5ba9125f7ea898a34dcd352d63eba993e03941c4a1e1624e5cc24a2c8431bc53'
   '9.4.2': 'a2ae67cbc8a6eed4c3c4e9360eaf437d465868d837e90426057260ac548139cf546082eb16249d760c9abe6b61243acee4507d7298396c77dcd9909dba9901a6'
 
-# ██ Installation paths (Windows)
+# Installation paths (Windows)
 winlogbeat_install_root: 'C:\Program Files\Winlogbeat'
 winlogbeat_data_dir: 'C:\ProgramData\Winlogbeat'
 winlogbeat_log_dir: 'C:\ProgramData\Winlogbeat\Logs'
 winlogbeat_download_dir: 'C:\Windows\Temp\winlogbeat'
 
-# ██ Graylog Beats input (Windows)
+# Graylog Beats input (Windows)
 winlogbeat_graylog_host: graylog.example.com
 winlogbeat_graylog_port: 5044
 
-# ██ Event log channels (Windows) — all events, no filter
-winlogbeat_event_logs:
-  - name: Application
-  - name: System
-  - name: Security
-  - name: Microsoft-Windows-TaskScheduler/Operational
-  - name: Microsoft-Windows-PowerShell/Operational
-  - name: Microsoft-Windows-Windows Defender/Operational
+# Event log channels (Windows)
+# Select from curated groups by default. Set winlogbeat_event_logs directly
+# if you need a complete manual override.
+winlogbeat_event_log_groups:
+  - baseline
+  - powershell
+  - task_scheduler
 
+# Validate configured channels during deployment and report missing channels.
+winlogbeat_validate_event_channels: true
 
-# ██ Service management (Windows)
+winlogbeat_event_log_group_definitions:
+  baseline:
+    - name: Application
+    - name: System
+    - name: Security
+
+  powershell:
+    - name: Microsoft-Windows-PowerShell/Operational
+    - name: Windows PowerShell
+
+  task_scheduler:
+    - name: Microsoft-Windows-TaskScheduler/Operational
+
+  applocker:
+    - name: Microsoft-Windows-AppLocker/EXE and DLL
+    - name: Microsoft-Windows-AppLocker/MSI and Script
+    - name: Microsoft-Windows-AppLocker/Packaged app-Deployment
+    - name: Microsoft-Windows-AppLocker/Packaged app-Execution
+
+  rds:
+    - name: Microsoft-Windows-TerminalServices-RemoteConnectionManager/Operational
+    - name: Microsoft-Windows-TerminalServices-LocalSessionManager/Operational
+    - name: Microsoft-Windows-RemoteDesktopServices-RdpCoreTS/Operational
+
+  user_profile:
+    - name: Microsoft-Windows-User Profile Service/Operational
+    - name: Microsoft-Windows-GroupPolicy/Operational
+    - name: Microsoft-Windows-Winlogon/Operational
+
+  fslogix:
+    - name: Microsoft-FSLogix-Apps/Admin
+    - name: Microsoft-FSLogix-Apps/Operational
+    - name: Microsoft-FSLogix-CloudCache/Admin
+
+  citrix:
+    - name: Citrix Profile Management Security
+    - name: Citrix-Multimedia-AudioSvc/Admin
+    - name: Citrix-Device-Redirector/Admin
+    - name: Citrix-CDF-ErrorReporter/Admin
+    - name: Citrix-HostCore-Remote Credential Guard/Operational
+
+  code_integrity:
+    - name: Microsoft-Windows-CodeIntegrity/Operational
+
+  laps:
+    - name: Microsoft-Windows-LAPS/Operational
+
+  storage:
+    - name: Microsoft-Windows-Ntfs/Operational
+    - name: Microsoft-Windows-Storage-Storport/Operational
+
+# Service management (Windows)
 winlogbeat_service_name: winlogbeat
 winlogbeat_service_state: started
 winlogbeat_service_enabled: true
 winlogbeat_retention_versions: 3
 
-# ██ Extra tags and fields (Windows)
+# Extra tags and fields (Windows)
 winlogbeat_tags: []
 # winlogbeat_fields:
 #   env: production
 #   datacenter: ch-flawil
 
-# ██ Linux logging via Fluent Bit → Graylog GELF
+# Linux logging via Fluent Bit -> Graylog GELF
 log_forwarder_linux_install: true
 log_forwarder_remove_repo: true  # remove Fluent Bit repo on uninstall
 

@@ -1,5 +1,5 @@
 ---
-# Windows/10_install.yml — Download, extract, install/upgrade Winlogbeat
+# Windows/10_install.yml - Download, extract, install/upgrade Winlogbeat
 # (imported by shared/10_install.yml on Windows targets)
 
 - name: Check currently installed version
@@ -14,7 +14,7 @@
   when: _wb_current_binary.stat.exists
   changed_when: false
 
-- name: Set fact — installed version
+- name: Set fact - installed version
   ansible.builtin.set_fact:
     _winlogbeat_installed: "{{ (_wb_installed_version.stdout | default('0.0.0')).strip() }}"
 

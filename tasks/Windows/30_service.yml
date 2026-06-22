@@ -1,5 +1,5 @@
 ---
-# Windows/30_service.yml — enforce Winlogbeat service state
+# Windows/30_service.yml - enforce Winlogbeat service state
 
 - name: Ensure Winlogbeat service is running
   ansible.windows.win_service:
