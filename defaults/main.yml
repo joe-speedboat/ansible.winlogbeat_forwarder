@@ -27,8 +27,9 @@ winlogbeat_event_logs:
   - name: Microsoft-Windows-PowerShell/Operational
   - name: Microsoft-Windows-Windows Defender/Operational
 
-# ██ Collector identity
-winlogbeat_node_name: "{{ inventory_hostname }}"
+# ██ Optional collector identity override
+# Set this only if you need a static collector ID across cloned images.
+# winlogbeat_node_name: "{{ inventory_hostname }}"
 
 # ██ Service management (Windows)
 winlogbeat_service_name: winlogbeat

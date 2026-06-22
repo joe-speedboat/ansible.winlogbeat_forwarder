@@ -131,7 +131,7 @@ The `log_forwarder_` prefix is used OS-wide; `winlogbeat_` variables apply to Wi
 | Variable | Default | Description |
 |---|---|---|
 | `winlogbeat_event_logs` | Application, System, Security | Event log channels (all events) |
-| `winlogbeat_node_name` | `{{ inventory_hostname }}` | Collector node identifier |
+| `winlogbeat_node_name` | *(not set)* | Optional static override for custom `agent_type`/`host`; if unset, Winlogbeat uses host metadata dynamically |
 | `winlogbeat_service_name` | `winlogbeat` | Windows service name |
 | `winlogbeat_service_state` | `started` | Desired service state |
 | `winlogbeat_service_enabled` | `true` | Auto-start on boot |
@@ -146,9 +146,14 @@ The `log_forwarder_` prefix is used OS-wide; `winlogbeat_` variables apply to Wi
 | Field | Value | Description |
 |---|---|---|
 | `log_type` | `winlogbeat` | Identifies Windows events in Graylog |
+| `host_ip` | `{{ ansible_default_ipv4.address }}` | Host IP |
+
+If you need explicit identity fields, set `winlogbeat_node_name` and this adds:
+
+| Field | Value | Description |
+|---|---|---|
 | `agent_type` | `{{ winlogbeat_node_name }}` | Collector node name |
 | `host` | `{{ winlogbeat_node_name }}` | Hostname in Graylog `source` |
-| `host_ip` | `{{ ansible_default_ipv4.address }}` | Host IP |
 
 ### Linux / Fluent Bit — Graylog Connection
 
@@ -391,7 +396,8 @@ The Graylog `source` field is set consistently across all Linux log types (journ
 | Package (Rocky/RHEL) | `source:<host> AND audit_type:SOFTWARE_UPDATE AND package_action:*` |
 | Package (Ubuntu) | `source:<host> AND log_type:auditd AND (package_action:install OR package_action:remove)` |
 | auth.log / secure | `source:<host> AND log_type:security_file` |
-| Windows Events | `source:<host> AND winlog_channel:Security AND agent_type:winlogbeat` |
+| Windows Events | `source:<host> AND winlog_channel:Security` *(if `winlogbeat_node_name` unset, hostname is from Winlogbeat runtime metadata)* |
+| Windows Events (static collector IDs) | `source:<host> AND winlog_channel:Security AND agent_type:winlogbeat` *(only when static override is set)* |
 
 `security_file` rows are emitted for files that exist and receive data. Minimal fresh templates may not yet have `/var/log/auth.log` or `/var/log/secure`; once the OS/syslog stack creates those files and writes auth records, Fluent Bit tails them with `log_type:security_file` and the same consolidated `source` value.
 

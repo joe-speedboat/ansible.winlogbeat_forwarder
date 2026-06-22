@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- **Winlogbeat identity defaults (Windows):** make `agent_type`/`host` optional in `fields` and rely on Winlogbeat runtime hostname metadata by default for cloned/master images. Added explicit static override via `winlogbeat_node_name` when needed.
+
 ## [v1.1.0] — 2026-06-15
 
 ### Changed

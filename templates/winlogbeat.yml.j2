@@ -30,8 +30,10 @@ output.logstash:
   fields_under_root: true
   fields:
     log_type: winlogbeat
+{% if winlogbeat_node_name is defined and winlogbeat_node_name %}
     agent_type: "{{ winlogbeat_node_name }}"
     host: "{{ winlogbeat_node_name }}"
+{% endif %}
     host_ip: "{{ ansible_default_ipv4.address | default('unknown') }}"
 {% if winlogbeat_fields is defined and winlogbeat_fields %}
   {{ winlogbeat_fields | to_nice_yaml(indent=2) | indent(2) }}

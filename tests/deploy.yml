@@ -8,7 +8,8 @@
       vars:
         winlogbeat_graylog_host: graylog.example.com
         winlogbeat_graylog_port: 5044
-        winlogbeat_node_name: "{{ inventory_hostname }}"
+        # Optional: override node name if you need a static collector ID for all Windows hosts
+        # winlogbeat_node_name: "{{ inventory_hostname }}"
         winlogbeat_fields:
           journal_forwarder: "true"
 
