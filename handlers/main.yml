@@ -1,5 +1,5 @@
 ---
-# handlers/main.yml — service lifecycle handlers
+# handlers/main.yml - service lifecycle handlers
 
 - name: restart winlogbeat
   ansible.windows.win_service:

@@ -1,5 +1,5 @@
 ---
-# Windows/20_configure.yml — deploy configuration and restart on changes
+# Windows/20_configure.yml - deploy configuration and restart on changes
 
 - name: Deploy winlogbeat.yml
   ansible.windows.win_template:

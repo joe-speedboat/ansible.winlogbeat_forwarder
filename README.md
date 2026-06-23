@@ -6,9 +6,9 @@ OS-independent Ansible role for forwarding Windows Event Logs and Linux logs to 
 |---|---|---|---|---|
 | Windows Server | Winlogbeat OSS 9.x | Beats | 5044 | Application, System, Security |
 | Ubuntu 24/26 | Fluent Bit | GELF TCP | 12201 | journald, auditd, auth.log, nginx, apache2 |
-| Rocky/RHEL/Alma 8–10 | Fluent Bit | GELF TCP | 12201 | journald, auditd, secure, nginx, httpd |
+| Rocky/RHEL/Alma 8-10 | Fluent Bit | GELF TCP | 12201 | journald, auditd, secure, nginx, httpd |
 
-Based on the `joe-speedboat/ansible.template` OS-independent task dispatcher — OS selection via Ansible facts.
+Based on the `joe-speedboat/ansible.template` OS-independent task dispatcher - OS selection via Ansible facts.
 
 ---
 
@@ -16,7 +16,7 @@ Based on the `joe-speedboat/ansible.template` OS-independent task dispatcher —
 
 ### Control Node
 
-- Ansible ≥ 2.14
+- Ansible >= 2.14
 - Windows targets: collection `ansible.windows`
 - Linux targets: SSH + root / privilege escalation
 - Rocky 8 targets: Python 3.9 must be installed (`dnf module enable -y python39 && dnf install -y python39`)
@@ -106,7 +106,7 @@ Create the matching inputs before deploying the role:
 
 The `log_forwarder_` prefix is used OS-wide; `winlogbeat_` variables apply to Windows only.
 
-### Windows / Winlogbeat — Graylog Connection
+### Windows / Winlogbeat - Graylog Connection
 
 | Variable | Default | Description |
 |---|---|---|
@@ -117,7 +117,7 @@ The `log_forwarder_` prefix is used OS-wide; `winlogbeat_` variables apply to Wi
 | `winlogbeat_download_url` | computed | Download URL for Winlogbeat OSS ZIP |
 | `winlogbeat_checksum` | dict (7.17.28, 7.17.29, 9.4.2) | SHA512 checksums per OSS version |
 
-### Windows / Winlogbeat — Paths
+### Windows / Winlogbeat - Paths
 
 | Variable | Default | Description |
 |---|---|---|
@@ -126,19 +126,54 @@ The `log_forwarder_` prefix is used OS-wide; `winlogbeat_` variables apply to Wi
 | `winlogbeat_log_dir` | `C:\ProgramData\Winlogbeat\Logs` | Log directory |
 | `winlogbeat_download_dir` | `C:\Windows\Temp\winlogbeat` | Temporary download directory |
 
-### Windows / Winlogbeat — Event Logs & Service
+### Windows / Winlogbeat - Event Logs & Service
 
 | Variable | Default | Description |
 |---|---|---|
-| `winlogbeat_event_logs` | Application, System, Security | Event log channels (all events) |
+| `winlogbeat_event_log_groups` | `baseline`, `powershell`, `task_scheduler` | Curated event-log groups to collect |
+| `winlogbeat_event_log_group_definitions` | see defaults | Built-in group-to-channel mapping |
+| `winlogbeat_event_logs` | - | Complete manual override; if set, groups are ignored |
+| `winlogbeat_validate_event_channels` | `true` | Check configured channels exist during deployment |
 | `winlogbeat_service_name` | `winlogbeat` | Windows service name |
 | `winlogbeat_service_state` | `started` | Desired service state |
 | `winlogbeat_service_enabled` | `true` | Auto-start on boot |
 | `winlogbeat_retention_versions` | `3` | Old versions retained during upgrades |
 | `winlogbeat_tags` | `[]` | Additional tags |
-| `winlogbeat_fields` | — | Additional fields merged into `fields:` |
+| `winlogbeat_fields` | - | Additional fields merged into `fields:` |
 
-### Windows / Winlogbeat — Graylog Fields
+Default groups collect Application, System, Security, PowerShell, and Task Scheduler. Optional groups include `applocker`, `rds`, `user_profile`, `fslogix`, `citrix`, `code_integrity`, `laps`, and `storage`.
+
+Example for RDS/Citrix hosts:
+
+```yaml
+winlogbeat_event_log_groups:
+  - baseline
+  - powershell
+  - task_scheduler
+  - rds
+  - user_profile
+  - fslogix
+  - citrix
+  - applocker
+  - code_integrity
+```
+
+Rendered Winlogbeat entries default to `ignore_missing_channel: true` unless a channel explicitly overrides it. Ansible still reports missing selected channels during deployment, but missing optional/vendor channels do not break the service.
+
+Use `ignore_missing_channel: false` only when a channel is mandatory for a host class. Example: if all RDS hosts must have the RemoteConnectionManager log, override the event list explicitly:
+
+```yaml
+winlogbeat_event_logs:
+  - name: Application
+  - name: System
+  - name: Security
+  - name: Microsoft-Windows-TerminalServices-RemoteConnectionManager/Operational
+    ignore_missing_channel: false
+```
+
+If that channel is missing, Winlogbeat treats it as a configuration error instead of silently skipping it. This is useful for enforcing expected platform features, not for optional vendor logs.
+
+### Windows / Winlogbeat - Graylog Fields
 
 `fields_under_root: true` under `output.logstash:` injects custom fields at root level in Graylog (no `winlogbeat_` prefix).
 
@@ -149,7 +184,7 @@ The `log_forwarder_` prefix is used OS-wide; `winlogbeat_` variables apply to Wi
 
 Optional additions can be supplied via `winlogbeat_fields`.
 
-### Linux / Fluent Bit — Graylog Connection
+### Linux / Fluent Bit - Graylog Connection
 
 | Variable | Default | Description |
 |---|---|---|
@@ -158,7 +193,7 @@ Optional additions can be supplied via `winlogbeat_fields`.
 | `log_forwarder_graylog_gelf_mode` | `tcp` | GELF mode (tcp or udp) |
 | `log_forwarder_fluent_bit_workers` | `2` | Fluent Bit output worker count |
 
-### Linux / Fluent Bit — Log Sources
+### Linux / Fluent Bit - Log Sources
 
 | Variable | Default | Description |
 |---|---|---|
@@ -186,7 +221,7 @@ log_forwarder_security_log_paths:
   - /var/log/httpd/*.log
 ```
 
-### Linux / Fluent Bit — Uninstall Options
+### Linux / Fluent Bit - Uninstall Options
 
 | Variable | Default | Description |
 |---|---|---|
@@ -223,34 +258,34 @@ The same rules are generated dynamically in the Fluent Bit config template. Rock
 
 ```
 tasks/
-├── main.yml              # Template dispatcher (entry point)
-├── include-file.yml      # OS folder selection via Ansible facts
-├── uninstall.yml         # Uninstall dispatcher (for include_role tasks_from)
-│
-├── Ubuntu/               # Fluent Bit — Debian family
-│   ├── 00_validate.yml   #   Assert mandatory variables
-│   ├── 10_install.yml    #   GPG key, apt repo, fluent-bit + auditd packages
-│   ├── 20_configure.yml  #   Fluent Bit config, parsers, audit rules
-│   ├── 30_service.yml    #   Enable/start auditd + fluent-bit
-│   └── uninstall.yml     #   Stop, purge fluent-bit + auditd, remove config/repo
-│
-├── rhelAll/              # Fluent Bit — RHEL family (Rocky 9+)
-│   ├── 00_validate.yml   #   Assert mandatory variables
-│   ├── 10_install.yml    #   yum_repository, dnf install fluent-bit + audit
-│   ├── 20_configure.yml  #   Fluent Bit config, parsers, audit rules
-│   ├── 30_service.yml    #   Enable/start auditd + fluent-bit
-│   └── uninstall.yml     #   Stop, dnf remove, delete config/repo
-│
-├── rhelAll-8/            # Fluent Bit — RHEL 8 (command-based tasks)
-│   ├── 10_install.yml    #   command-based repo, rpm import, dnf install
-│   └── uninstall.yml     #   command-based stop, dnf remove, file cleanup
-│
-└── Windows/              # Winlogbeat — Windows family
-    ├── 00_validate.yml   #   Assert mandatory variables
-    ├── 10_install.yml    #   Download ZIP, extract, junction, service install
-    ├── 20_configure.yml  #   Deploy winlogbeat.yml config
-    ├── 30_service.yml    #   Enforce service state
-    └── uninstall.yml     #   Stop, uninstall-service, remove directories
+|-- main.yml              # Template dispatcher (entry point)
+|-- include-file.yml      # OS folder selection via Ansible facts
+|-- uninstall.yml         # Uninstall dispatcher (for include_role tasks_from)
+|
+|-- Ubuntu/               # Fluent Bit - Debian family
+|   |-- 00_validate.yml   #   Assert mandatory variables
+|   |-- 10_install.yml    #   GPG key, apt repo, fluent-bit + auditd packages
+|   |-- 20_configure.yml  #   Fluent Bit config, parsers, audit rules
+|   |-- 30_service.yml    #   Enable/start auditd + fluent-bit
+|   `-- uninstall.yml     #   Stop, purge fluent-bit + auditd, remove config/repo
+|
+|-- rhelAll/              # Fluent Bit - RHEL family (Rocky 9+)
+|   |-- 00_validate.yml   #   Assert mandatory variables
+|   |-- 10_install.yml    #   yum_repository, dnf install fluent-bit + audit
+|   |-- 20_configure.yml  #   Fluent Bit config, parsers, audit rules
+|   |-- 30_service.yml    #   Enable/start auditd + fluent-bit
+|   `-- uninstall.yml     #   Stop, dnf remove, delete config/repo
+|
+|-- rhelAll-8/            # Fluent Bit - RHEL 8 (command-based tasks)
+|   |-- 10_install.yml    #   command-based repo, rpm import, dnf install
+|   `-- uninstall.yml     #   command-based stop, dnf remove, file cleanup
+|
+`-- Windows/              # Winlogbeat - Windows family
+    |-- 00_validate.yml   #   Assert mandatory variables
+    |-- 10_install.yml    #   Download ZIP, extract, junction, service install
+    |-- 20_configure.yml  #   Deploy winlogbeat.yml config
+    |-- 30_service.yml    #   Enforce service state
+    `-- uninstall.yml     #   Stop, uninstall-service, remove directories
 ```
 
 The template dispatcher (`main.yml` + `include-file.yml`) discovers numbered task files (regex `^[0-9]{2}_.*.yml$`) across all OS folders at runtime and selects the first matching file by OS specificity.
@@ -261,7 +296,7 @@ The template dispatcher (`main.yml` + `include-file.yml`) discovers numbered tas
 
 | Template | Destination | Purpose |
 |---|---|---|
-| `fluent-bit-logbeat.conf.j2` | `/etc/fluent-bit/fluent-bit.conf` | Fluent Bit main config: systemd/tail inputs, auth/sudo parsers, GELF output. Sets `hostname` via Fluent Bit's built-in `${HOSTNAME}` variable — all three log sources (journald, auditd, security_file) produce the same `source` in Graylog, and hostname changes are picked up after a Fluent Bit restart |
+| `fluent-bit-logbeat.conf.j2` | `/etc/fluent-bit/fluent-bit.conf` | Fluent Bit main config: systemd/tail inputs, auth/sudo parsers, GELF output. Sets `hostname` via Fluent Bit's built-in `${HOSTNAME}` variable - all three log sources (journald, auditd, security_file) produce the same `source` in Graylog, and hostname changes are picked up after a Fluent Bit restart |
 | `parsers-logbeat-forwarder.conf.j2` | `/etc/fluent-bit/parsers-logbeat-forwarder.conf` | Regex parsers: audit_raw, audit_package_fields, auth_sshd, auth_pam, sudo |
 | `audit-package.rules.j2` | `/etc/audit/rules.d/logbeat-package.rules` | Audit rules for package-change monitoring (per OS family) |
 | `winlogbeat.yml.j2` | `{{ winlogbeat_install_path }}\winlogbeat.yml` | Winlogbeat config: event log inputs, Beats output, field injection |
@@ -327,11 +362,11 @@ winlogbeat_version: '9.4.2'
 The role uses Elastic's OSS-only ZIP artifacts (`winlogbeat-oss-<version>-windows-x86_64.zip`) for Apache 2.0 licensing. The OSS ZIP still extracts to `winlogbeat-<version>-windows-x86_64`, so the same service scripts and junction-based installer workflow are used.
 
 Upgrade workflow:
-1. Stop service → extract ZIP → repoint `current` junction
-2. Deploy config → install service → start service
+1. Stop service -> extract ZIP -> repoint `current` junction
+2. Deploy config -> install service -> start service
 3. Clean up old versions beyond `winlogbeat_retention_versions` (default: keep 3)
 4. Remove any legacy `backup` directory left by older role versions
-5. The old version folder remains intact until it exceeds retention — no separate backup copy is created
+5. The old version folder remains intact until it exceeds retention - no separate backup copy is created
 
 ---
 
@@ -370,15 +405,15 @@ Get-Content 'C:\Program Files\Winlogbeat\current\winlogbeat.yml'
 
 ### Graylog Search
 
-After enabling **«Do not add Beats type as prefix»** on the Graylog Beats input, all fields arrive without the `winlogbeat_` prefix (e.g. `agent_hostname`, not `winlogbeat_agent_hostname`).
+After enabling **"Do not add Beats type as prefix"** on the Graylog Beats input, all fields arrive without the `winlogbeat_` prefix (e.g. `agent_hostname`, not `winlogbeat_agent_hostname`).
 
 All events include the `journal_forwarder:true` marker field, usable as a portable discriminator across OS families.
 
 The Graylog `source` field is set consistently across all Linux log types (journald, auditd, security_file) using Fluent Bit's `Gelf_Host_Key` with the `${HOSTNAME}` built-in variable. This ensures:
 
-- **Same source value** for all log types from the same host — no mix of short hostname and FQDN
-- **Dynamic hostname pickup** — if the host is renamed, a Fluent Bit restart (`systemctl restart fluent-bit`) updates the source without re-deploying Ansible
-- **Cross-OS consistency** — short hostname on all OS families (Ubuntu, Rocky/RHEL/Alma)
+- **Same source value** for all log types from the same host - no mix of short hostname and FQDN
+- **Dynamic hostname pickup** - if the host is renamed, a Fluent Bit restart (`systemctl restart fluent-bit`) updates the source without re-deploying Ansible
+- **Cross-OS consistency** - short hostname on all OS families (Ubuntu, Rocky/RHEL/Alma)
 
 | Source | Query |
 |---|---|
@@ -397,9 +432,9 @@ The Graylog `source` field is set consistently across all Linux log types (journ
 
 **Cross-OS notes**:
 
-- **Package events** — Rocky/RHEL produces native `audit_type=SOFTWARE_UPDATE` records with `op=install\|remove\|update`, `sw="<pkg>-<version>"`. Ubuntu produces `audit_type=EXECVE` records from `apt-get`/`dpkg` with `package_action` and `package_name`. Both OS families normalize to the same `package_action`/`package_name` fields, so the portable query `log_type:auditd AND package_action:*` works everywhere.
+- **Package events** - Rocky/RHEL produces native `audit_type=SOFTWARE_UPDATE` records with `op=install\|remove\|update`, `sw="<pkg>-<version>"`. Ubuntu produces `audit_type=EXECVE` records from `apt-get`/`dpkg` with `package_action` and `package_name`. Both OS families normalize to the same `package_action`/`package_name` fields, so the portable query `log_type:auditd AND package_action:*` works everywhere.
 
-- **su sessions** — `su -` logs as `auth_service=su-l`. Use `auth_service:su*` (wildcard) for portable matching across login and non-login su sessions.
+- **su sessions** - `su -` logs as `auth_service=su-l`. Use `auth_service:su*` (wildcard) for portable matching across login and non-login su sessions.
 
 **Representative parsed fields**:
 

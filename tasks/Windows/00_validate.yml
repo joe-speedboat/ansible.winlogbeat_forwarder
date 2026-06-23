@@ -1,5 +1,5 @@
 ---
-# Windows/00_validate.yml — runtime validation for Windows targets
+# Windows/00_validate.yml - runtime validation for Windows targets
 
 - name: Assert required variables are set
   ansible.builtin.assert:
@@ -22,4 +22,52 @@
     fail_msg: >
       This role requires Windows Server 2022 or newer.
       Detected: {{ ansible_os_name }} {{ ansible_distribution_version }}
+
+- name: Initialize effective Winlogbeat event logs
+  ansible.builtin.set_fact:
+    winlogbeat_event_logs_effective: []
+
+- name: Use explicitly configured Winlogbeat event logs
+  ansible.builtin.set_fact:
+    winlogbeat_event_logs_effective: "{{ winlogbeat_event_logs }}"
+  when: winlogbeat_event_logs is defined
+
+- name: Build Winlogbeat event logs from selected groups
+  ansible.builtin.set_fact:
+    winlogbeat_event_logs_effective: >-
+      {{ winlogbeat_event_logs_effective + (winlogbeat_event_log_group_definitions[item] | default([])) }}
+  loop: "{{ winlogbeat_event_log_groups | default(['baseline']) }}"
+  when: winlogbeat_event_logs is not defined
+
+- name: Assert at least one Winlogbeat event log is configured
+  ansible.builtin.assert:
+    that:
+      - winlogbeat_event_logs_effective | length > 0
+    fail_msg: >
+      No Winlogbeat event logs are configured. Set winlogbeat_event_logs or
+      select at least one valid winlogbeat_event_log_groups entry.
+
+- name: List available Windows Event Log channels
+  ansible.windows.win_shell: |
+    Get-WinEvent -ListLog * -ErrorAction SilentlyContinue |
+      Select-Object -ExpandProperty LogName
+  register: winlogbeat_available_event_channels_result
+  changed_when: false
+  when: winlogbeat_validate_event_channels | bool
+
+- name: Calculate missing Winlogbeat event channels
+  ansible.builtin.set_fact:
+    winlogbeat_missing_event_channels: >-
+      {{ (winlogbeat_event_logs_effective | map(attribute='name') | list)
+         | difference(winlogbeat_available_event_channels_result.stdout_lines | default([])) }}
+  when: winlogbeat_validate_event_channels | bool
+
+- name: Report missing Winlogbeat event channels
+  ansible.builtin.debug:
+    msg:
+      - "Missing Winlogbeat event channels on {{ inventory_hostname }}:"
+      - "{{ winlogbeat_missing_event_channels }}"
+  when:
+    - winlogbeat_validate_event_channels | bool
+    - winlogbeat_missing_event_channels | length > 0
 ...
