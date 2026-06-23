@@ -1,8 +1,8 @@
 ---
-# uninstall.yml - remove log_forwarder completely (Windows + Linux)
+# uninstall.yml - remove winlogbeat_forwarder completely (Windows + Linux)
 # Usage:
 #   ansible.builtin.include_role:
-#     name: joe-speedboat.log_forwarder
+#     name: joe-speedboat.winlogbeat_forwarder
 #     tasks_from: uninstall.yml
 #
 

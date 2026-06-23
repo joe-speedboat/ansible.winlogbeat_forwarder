@@ -1,17 +1,16 @@
 ---
 galaxy_info:
-  role_name: log_forwarder
+  role_name: winlogbeat_forwarder
   namespace: joe-speedboat
   author: Joe Speedboat
   description: Forward Windows Event Logs to Graylog with Winlogbeat
   company: Bitbull Open Source
-  license: GPL-3.0-or-later
+  license: Apache License 2.0
   min_ansible_version: '2.14'
   platforms:
     - name: Windows
       versions:
         - '2022'
-        - '2025'
   galaxy_tags:
     - windows
     - winlogbeat

@@ -2,9 +2,8 @@
 - name: Deploy Winlogbeat -> Graylog
   hosts: windows
   gather_facts: true
-
   roles:
-    - role: joe-speedboat.log_forwarder
+    - role: joe-speedboat.winlogbeat_forwarder
       vars:
         winlogbeat_graylog_host: graylog.example.com
         winlogbeat_graylog_port: 5044

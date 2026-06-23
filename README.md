@@ -1,4 +1,4 @@
-# Ansible Role: `joe-speedboat.log_forwarder`
+# Ansible Role: `joe-speedboat.winlogbeat_forwarder`
 
 Windows-only Ansible role for forwarding **Windows Event Logs** to **Graylog** with **Winlogbeat** over the Graylog Beats input.
 
@@ -49,7 +49,7 @@ For the Beats input, enable **Do not add Beats type as prefix** so fields are no
   hosts: windows
   gather_facts: true
   roles:
-    - role: joe-speedboat.log_forwarder
+    - role: joe-speedboat.winlogbeat_forwarder
       vars:
         winlogbeat_graylog_host: graylog.example.com
         winlogbeat_graylog_port: 5044
@@ -63,7 +63,7 @@ For the Beats input, enable **Do not add Beats type as prefix** so fields are no
   gather_facts: true
   tasks:
     - ansible.builtin.include_role:
-        name: joe-speedboat.log_forwarder
+        name: joe-speedboat.winlogbeat_forwarder
         tasks_from: uninstall.yml
 ```
 
@@ -152,7 +152,7 @@ Upgrade workflow:
 ## Installation
 
 ```bash
-git clone https://github.com/joe-speedboat/ansible.winlogbeat_forwarder.git /etc/ansible/roles/joe-speedboat.log_forwarder
+git clone https://github.com/joe-speedboat/ansible.winlogbeat_forwarder.git /etc/ansible/roles/joe-speedboat.winlogbeat_forwarder
 ```
 
 Or via Galaxy (once published):
@@ -166,11 +166,11 @@ ansible-galaxy role install joe-speedboat.winlogbeat_forwarder
 Useful validation queries:
 
 ```text
-source:<host> AND winlog_channel:Application AND agent_type:winlogbeat
-source:<host> AND winlog_channel:Security AND agent_type:winlogbeat
-source:<host> AND winlog_provider_name:<provider> AND agent_type:winlogbeat
+winlog_channel: Application AND agent_type: winlogbeat
+winlog_channel: Security AND agent_type: winlogbeat
+winlog_provider_name: <provider> AND agent_type: winlogbeat
 ```
 
 ## License
 
-GPLv3
+Apache License 2.0
