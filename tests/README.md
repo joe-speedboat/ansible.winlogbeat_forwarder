@@ -5,7 +5,7 @@ This role uses the joe-speedboat OS-independent task dispatcher. Run tests from 
 ```bash
 mkdir -p /tmp/log-forwarder-harness/roles
 ln -sfn "$PWD" /tmp/log-forwarder-harness/roles/joe-speedboat.log_forwarder
-ln -sfn "$PWD" /tmp/log-forwarder-harness/roles/ansible.log_forwarder
+ln -sfn "$PWD" /tmp/log-forwarder-harness/roles/ansible.winlogbeat_forwarder
 # If your checkout directory has a different basename, add that too:
 ln -sfn "$PWD" "/tmp/log-forwarder-harness/roles/$(basename "$PWD")"
 
@@ -17,7 +17,7 @@ ANSIBLE_ROLES_PATH=/tmp/log-forwarder-harness/roles \
   ansible-playbook -i tests/inventory tests/deploy.yml --diff
 ```
 
-The `ansible.log_forwarder` or checkout-basename symlink covers runs where Ansible resolves `role_path|basename` to the repository directory instead of the Galaxy role name.
+The `ansible.winlogbeat_forwarder` or checkout-basename symlink covers runs where Ansible resolves `role_path|basename` to the repository directory instead of the Galaxy role name.
 
 Always verify beyond a green play recap on Windows targets:
 

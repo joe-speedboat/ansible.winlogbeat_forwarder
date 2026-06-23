@@ -135,12 +135,30 @@ During deployment, the role prints `Missing Winlogbeat event channels` only when
 Use `ignore_missing_channel: false` when a channel is mandatory for a host class:
 
 ```yaml
-winlogbeat_event_logs:
-  - name: Application
-  - name: System
-  - name: Security
-  - name: Microsoft-Windows-TerminalServices-RemoteConnectionManager/Operational
-    ignore_missing_channel: false
+winlogbeat_version: '9.4.2'
+```
+
+The role uses Elastic's OSS-only ZIP artifacts (`winlogbeat-oss-<version>-windows-x86_64.zip`) for Apache 2.0 licensing. The OSS ZIP still extracts to `winlogbeat-<version>-windows-x86_64`, so the same service scripts and junction-based installer workflow are used.
+
+Upgrade workflow:
+1. Stop service -> extract ZIP -> repoint `current` junction
+2. Deploy config -> install service -> start service
+3. Clean up old versions beyond `winlogbeat_retention_versions` (default: keep 3)
+4. Remove any legacy `backup` directory left by older role versions
+5. The old version folder remains intact until it exceeds retention - no separate backup copy is created
+
+---
+
+## Installation
+
+```bash
+git clone https://github.com/joe-speedboat/ansible.winlogbeat_forwarder.git /etc/ansible/roles/joe-speedboat.log_forwarder
+```
+
+Or via Galaxy (once published):
+
+```bash
+ansible-galaxy role install joe-speedboat.winlogbeat_forwarder
 ```
 
 ## Graylog Search

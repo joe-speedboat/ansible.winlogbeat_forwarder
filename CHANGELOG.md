@@ -35,13 +35,13 @@
 
 - **Template revert**: Reverted unintended modification of the template dispatcher control file `tasks/main.yml`. ([#4])
 
-[#2]: https://github.com/joe-speedboat/ansible.log_forwarder/pull/2
-[#3]: https://github.com/joe-speedboat/ansible.log_forwarder/pull/3
-[#4]: https://github.com/joe-speedboat/ansible.log_forwarder/pull/4
-[#5]: https://github.com/joe-speedboat/ansible.log_forwarder/pull/5
-[#7]: https://github.com/joe-speedboat/ansible.log_forwarder/pull/7
-[#9]: https://github.com/joe-speedboat/ansible.log_forwarder/pull/9
-[#10]: https://github.com/joe-speedboat/ansible.log_forwarder/pull/10
-[v1.0.0]: https://github.com/joe-speedboat/ansible.log_forwarder/releases/tag/v1.0.0
-[v1.0.1]: https://github.com/joe-speedboat/ansible.log_forwarder/releases/tag/v1.0.1
-[v1.1.0]: https://github.com/joe-speedboat/ansible.log_forwarder/releases/tag/v1.1.0
+[#2]: https://github.com/joe-speedboat/ansible.winlogbeat_forwarder/pull/2
+[#3]: https://github.com/joe-speedboat/ansible.winlogbeat_forwarder/pull/3
+[#4]: https://github.com/joe-speedboat/ansible.winlogbeat_forwarder/pull/4
+[#5]: https://github.com/joe-speedboat/ansible.winlogbeat_forwarder/pull/5
+[#7]: https://github.com/joe-speedboat/ansible.winlogbeat_forwarder/pull/7
+[#9]: https://github.com/joe-speedboat/ansible.winlogbeat_forwarder/pull/9
+[#10]: https://github.com/joe-speedboat/ansible.winlogbeat_forwarder/pull/10
+[v1.0.0]: https://github.com/joe-speedboat/ansible.winlogbeat_forwarder/releases/tag/v1.0.0
+[v1.0.1]: https://github.com/joe-speedboat/ansible.winlogbeat_forwarder/releases/tag/v1.0.1
+[v1.1.0]: https://github.com/joe-speedboat/ansible.winlogbeat_forwarder/releases/tag/v1.1.0
