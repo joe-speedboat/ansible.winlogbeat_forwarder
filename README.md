@@ -17,9 +17,39 @@ Based on the `joe-speedboat/ansible.template` OS-independent task dispatcher - O
 ### Control Node
 
 - Ansible >= 2.14
-- Windows targets: collection `ansible.windows`
+- Windows targets: collections `ansible.windows` and `community.windows`
 - Linux targets: SSH + root / privilege escalation
 - Rocky 8 targets: Python 3.9 must be installed (`dnf module enable -y python39 && dnf install -y python39`)
+
+### Windows / Winlogbeat Controller Prerequisites
+
+Install or refresh the Windows collections on the Ansible/Rundeck controller before deploying Windows targets:
+
+```bash
+ansible-galaxy collection install ansible.windows community.windows --force
+```
+
+Verify that `win_template` is available from the same Ansible environment that runs the playbook:
+
+```bash
+ansible-doc ansible.windows.win_template >/dev/null && echo "ansible.windows.win_template OK"
+ansible-galaxy collection list | grep -E '^(ansible\.windows|community\.windows)\s'
+```
+
+This is important because `ansible.windows.win_template` renders Jinja locally on the controller and then transfers the rendered file to Windows. If the controller has a missing, stale, or broken `ansible.windows` collection, deployment can silently copy the raw `.j2` template instead of rendered YAML. The Winlogbeat config on the target will then still contain lines such as:
+
+```jinja
+{% for log in winlogbeat_event_logs_effective | default(winlogbeat_event_logs) %}
+  - name: {{ log.name }}
+```
+
+and Winlogbeat validation fails with an error similar to:
+
+```text
+Exiting: error loading config file: yaml: line 6: found character that cannot start any token
+```
+
+If this happens, refresh the collections on the controller with the `ansible-galaxy collection install ... --force` command above, then rerun the playbook.
 
 ### Graylog
 
