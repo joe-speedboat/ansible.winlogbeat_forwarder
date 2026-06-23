@@ -2,8 +2,6 @@
 
 Windows-only Ansible role for forwarding **Windows Event Logs** to **Graylog** with **Winlogbeat** over the Graylog Beats input.
 
-> Linux Fluent Bit / journald / audit forwarding was moved to `joe-speedboat.journal_forwarder` (`https://github.com/joe-speedboat/ansible.journal_forwarder`). Use that role for Linux hosts.
-
 ## Requirements
 
 ### Control Node
@@ -166,9 +164,10 @@ ansible-galaxy role install joe-speedboat.winlogbeat_forwarder
 Useful validation queries:
 
 ```text
-winlog_channel: Application AND agent_type: winlogbeat
-winlog_channel: Security AND agent_type: winlogbeat
-winlog_provider_name: <provider> AND agent_type: winlogbeat
+winlog_channel:Application AND agent_type:winlogbeat
+winlog_channel:Security AND agent_type:winlogbeat
+winlog_provider_name:<provider> AND agent_type:winlogbeat
+winlogbeat_forwarder:true
 ```
 
 ## License
