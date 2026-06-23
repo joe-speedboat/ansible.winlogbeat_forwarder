@@ -93,7 +93,10 @@
   ansible.windows.win_shell: |
     & "{{ winlogbeat_install_path }}\install-service-winlogbeat.ps1"
   when:
-    - not _wb_current_binary.stat.exists or _winlogbeat_installed != winlogbeat_version
+    - >-
+      not _wb_current_binary.stat.exists or
+      _winlogbeat_installed != winlogbeat_version or
+      (_wb_service_info.services | length == 0)
   register: _wb_install
   changed_when: true
   notify: restart winlogbeat
