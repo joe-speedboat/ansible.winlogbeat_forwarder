@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+No unreleased changes.
+
+## [v1.0.1] - 2026-06-29
+
 ### Changed
 
 - Add optional Windows-native event-log groups for remote management, Defender/firewall, Windows Update, network, SMB, device lifecycle, diagnostics, identity, server manager, RDS, and storage coverage.
