@@ -64,6 +64,40 @@
          | difference(winlogbeat_available_event_channels_result.stdout_lines | default([])) }}
   when: winlogbeat_validate_event_channels | bool
 
+- name: List configured Windows Event Log channels selected for forwarding
+  ansible.windows.win_shell: |
+    $configuredJson = @'
+    {{ winlogbeat_configured_event_channel_names | to_json }}
+    '@
+    $configuredChannels = $configuredJson | ConvertFrom-Json
+    $available = @{}
+
+    Get-WinEvent -ListLog * -ErrorAction SilentlyContinue |
+      ForEach-Object {
+        $available[$_.LogName] = $_.RecordCount
+      }
+
+    foreach ($channel in $configuredChannels) {
+      $name = [string]$channel
+      if ($available.ContainsKey($name)) {
+        $recordCount = $available[$name]
+        if ($null -eq $recordCount) {
+          $recordCount = 0
+        }
+        "{0} (records={1})" -f $name, $recordCount
+      } else {
+        "{0} (missing)" -f $name
+      }
+    }
+  register: winlogbeat_configured_event_channels_result
+  changed_when: false
+  when: winlogbeat_validate_event_channels | bool
+
+- name: Store Windows Event Log configured channel report
+  ansible.builtin.set_fact:
+    winlogbeat_configured_event_channel_report: "{{ winlogbeat_configured_event_channels_result.stdout_lines | default([]) }}"
+  when: winlogbeat_validate_event_channels | bool
+
 - name: List populated Windows Event Log channels not forwarded to Graylog
   ansible.windows.win_shell: |
     $configuredJson = @'
@@ -101,11 +135,13 @@
     - winlogbeat_validate_event_channels | bool
     - winlogbeat_missing_event_channels | length > 0
 
-- name: Report Windows Event Log channels not forwarded to Graylog
+- name: Report Windows Event Log channel coverage
   ansible.builtin.debug:
     msg:
-      - "Windows Event Log channels with records on {{ inventory_hostname }} but not selected for Winlogbeat forwarding:"
+      - "Configured Windows Event Log channels selected for Winlogbeat forwarding on {{ inventory_hostname }}:"
       - "configured_count={{ winlogbeat_configured_event_channel_names | length }}"
+      - "{{ winlogbeat_configured_event_channel_report }}"
+      - "Windows Event Log channels with records on {{ inventory_hostname }} but not selected for Winlogbeat forwarding:"
       - "unforwarded_count={{ winlogbeat_unforwarded_event_channel_report | length }}"
       - "{{ winlogbeat_unforwarded_event_channel_report }}"
   when:

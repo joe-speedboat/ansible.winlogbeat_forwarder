@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Add configured event-log channel details to the coverage report, including per-channel record counts and missing status.
 - Select all built-in event-log groups by default while keeping a commented small baseline example for users who want to manually pick categories.
 - Add more optional Windows event-log groups from additional production coverage reports, including certificates/identity, diagnostics, file services, Hyper-V, OpenSSH, printing, remote assistance, security hardening, setup/provisioning, time service, volume shadow copy, Exchange, and expanded RDS/SMB/storage/network coverage.
 
