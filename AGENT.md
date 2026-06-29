@@ -70,10 +70,7 @@ Key variables:
 winlogbeat_graylog_host: graylog.example.com
 winlogbeat_graylog_port: 5044
 winlogbeat_version: '9.4.2'
-winlogbeat_event_log_groups:
-  - baseline
-  - powershell
-  - task_scheduler
+winlogbeat_event_log_groups: "{{ winlogbeat_event_log_group_definitions.keys() | list }}"
 winlogbeat_validate_event_channels: true
 winlogbeat_report_unforwarded_event_channels: true
 ```
@@ -82,7 +79,7 @@ winlogbeat_report_unforwarded_event_channels: true
 
 `winlogbeat_event_log_groups` is the preferred interface for normal use. It selects curated groups from `winlogbeat_event_log_group_definitions`.
 
-Default groups should stay small and broadly useful:
+The default group selector intentionally expands to all built-in curated groups. Users can override it to collect only a smaller baseline set:
 
 ```yaml
 winlogbeat_event_log_groups:

@@ -88,7 +88,7 @@ For the Beats input, enable **Do not add Beats type as prefix** so fields are no
 
 | Variable | Default | Description |
 |---|---|---|
-| `winlogbeat_event_log_groups` | `baseline`, `powershell`, `task_scheduler` | Curated event-log groups to collect |
+| `winlogbeat_event_log_groups` | all keys from `winlogbeat_event_log_group_definitions` | Curated event-log groups to collect |
 | `winlogbeat_event_log_group_definitions` | see defaults | Built-in group-to-channel mapping |
 | `winlogbeat_event_logs` | unset | Complete manual event-channel override; if set, groups are ignored |
 | `winlogbeat_validate_event_channels` | `true` | Validate target event-channel availability during deployment |
@@ -97,7 +97,16 @@ For the Beats input, enable **Do not add Beats type as prefix** so fields are no
 | `winlogbeat_service_state` | `started` | Desired service state |
 | `winlogbeat_service_enabled` | `true` | Auto-start on boot |
 
-Default groups collect Application, System, Security, PowerShell, and Task Scheduler. Optional groups include `applocker`, `rds`, `user_profile`, `fslogix`, `citrix`, `code_integrity`, `laps`, `storage`, `remote_management`, `defender_firewall`, `windows_update`, `network`, `smb`, `device_lifecycle`, `diagnostics`, `identity`, `server_manager`, `file_services`, `hyper_v`, `printing`, `remote_assistance`, `security_hardening`, `setup_provisioning`, `time_service`, `volume_shadow_copy`, `openssh`, and `exchange`.
+By default, `winlogbeat_event_log_groups` selects all built-in groups from `winlogbeat_event_log_group_definitions`. Override it when a host class should collect only selected categories:
+
+```yaml
+winlogbeat_event_log_groups:
+  - baseline
+  - powershell
+  - task_scheduler
+```
+
+Built-in groups include `baseline`, `powershell`, `task_scheduler`, `applocker`, `rds`, `user_profile`, `fslogix`, `citrix`, `code_integrity`, `laps`, `storage`, `remote_management`, `defender_firewall`, `windows_update`, `network`, `smb`, `device_lifecycle`, `diagnostics`, `identity`, `server_manager`, `file_services`, `hyper_v`, `printing`, `remote_assistance`, `security_hardening`, `setup_provisioning`, `time_service`, `volume_shadow_copy`, `openssh`, and `exchange`.
 
 ## Checking Windows Event Log Coverage
 
