@@ -54,9 +54,11 @@ winlogbeat_event_log_group_definitions:
     - name: Microsoft-Windows-AppLocker/Packaged app-Execution
 
   rds:
+    - name: Microsoft-Windows-TerminalServices-RemoteConnectionManager/Admin
     - name: Microsoft-Windows-TerminalServices-RemoteConnectionManager/Operational
     - name: Microsoft-Windows-TerminalServices-LocalSessionManager/Operational
     - name: Microsoft-Windows-RemoteDesktopServices-RdpCoreTS/Operational
+    - name: Microsoft-Windows-RemoteDesktopServices-SessionServices/Operational
 
   user_profile:
     - name: Microsoft-Windows-User Profile Service/Operational
@@ -83,7 +85,58 @@ winlogbeat_event_log_group_definitions:
 
   storage:
     - name: Microsoft-Windows-Ntfs/Operational
+    - name: Microsoft-Windows-Ntfs/WHC
+    - name: Microsoft-Windows-Storage-Storport/Health
     - name: Microsoft-Windows-Storage-Storport/Operational
+    - name: Microsoft-Windows-StorageSpaces-Driver/Operational
+
+  remote_management:
+    - name: Microsoft-Windows-WinRM/Operational
+    - name: Microsoft-Windows-WMI-Activity/Operational
+
+  defender_firewall:
+    - name: Microsoft-Windows-Windows Defender/Operational
+    - name: Microsoft-Windows-Windows Firewall With Advanced Security/Firewall
+    - name: Microsoft-Windows-Windows Firewall With Advanced Security/FirewallDiagnostics
+
+  windows_update:
+    - name: Microsoft-Windows-WindowsUpdateClient/Operational
+
+  network:
+    - name: Microsoft-Windows-Dhcp-Client/Admin
+    - name: Microsoft-Windows-NCSI/Operational
+    - name: Microsoft-Windows-NetworkProfile/Operational
+    - name: Microsoft-Windows-Wcmsvc/Operational
+    - name: Microsoft-Windows-WinINet-Config/ProxyConfigChanged
+
+  smb:
+    - name: Microsoft-Windows-SmbClient/Connectivity
+    - name: Microsoft-Windows-SMBServer/Operational
+
+  device_lifecycle:
+    - name: Microsoft-Windows-DeviceSetupManager/Admin
+    - name: Microsoft-Windows-DeviceSetupManager/Operational
+    - name: Microsoft-Windows-Kernel-PnP/Configuration
+    - name: Microsoft-Windows-Kernel-PnP/Device Management
+    - name: Microsoft-Windows-UserPnp/DeviceInstall
+
+  diagnostics:
+    - name: Microsoft-Windows-DataIntegrityScan/Admin
+    - name: Microsoft-Windows-Diagnosis-DPS/Operational
+    - name: Microsoft-Windows-Kernel-Boot/Operational
+    - name: Microsoft-Windows-Kernel-WHEA/Operational
+    - name: Microsoft-Windows-Resource-Exhaustion-Detector/Operational
+    - name: Microsoft-Windows-WER-PayloadHealth/Operational
+
+  identity:
+    - name: Microsoft-Windows-AAD/Operational
+    - name: Microsoft-Windows-HelloForBusiness/Operational
+    - name: Microsoft-Windows-User Device Registration/Admin
+
+  server_manager:
+    - name: Microsoft-Windows-ServerManager-DeploymentProvider/Operational
+    - name: Microsoft-Windows-ServerManager-MgmtProvider/Operational
+    - name: Microsoft-Windows-ServerManager-MultiMachine/Operational
 
 # Service management (Windows)
 winlogbeat_service_name: winlogbeat
