@@ -6,6 +6,10 @@ No unreleased changes.
 
 ## [v1.0.1] - 2026-06-29
 
+### Added
+
+- Add `AGENT.md` maintainer guidance for agents working on the role, including validation workflow and the pattern for deriving useful optional event-log groups from pasted Ansible coverage output.
+
 ### Changed
 
 - Add optional Windows-native event-log groups for remote management, Defender/firewall, Windows Update, network, SMB, device lifecycle, diagnostics, identity, server manager, RDS, and storage coverage.
