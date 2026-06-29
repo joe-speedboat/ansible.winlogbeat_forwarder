@@ -115,16 +115,18 @@ The role checks event-log coverage in two directions:
 1. Selected channels that are missing on the target.
 2. Target channels that contain records on Windows but are not selected for Winlogbeat forwarding to Graylog.
 
-The second report is the useful one for finding logs that already contain events on a server but are not currently collected. During deployment, the role prints:
+The coverage report shows the configured channels first, including whether each selected path exists and how many records it currently contains. This helps identify configured paths that are empty, nearly empty, or absent on the target. It then shows populated target channels that are not currently collected. During deployment, the role prints:
 
 ```text
-Windows Event Log channels with records on <host> but not selected for Winlogbeat forwarding:
+Configured Windows Event Log channels selected for Winlogbeat forwarding on <host>:
 configured_count=<number>
+[<channel path> (records=<count>), <channel path> (records=0), <channel path> (missing), ...]
+Windows Event Log channels with records on <host> but not selected for Winlogbeat forwarding:
 unforwarded_count=<number>
 [<channel path> (records=<count>), <channel path> (records=<count>), ...]
 ```
 
-Channels with zero records are ignored by this report. They exist in Event Viewer, but they are not evidence of missed data yet.
+Channels with zero records are included in the configured-channel list when selected, so you can see which configured paths are empty or rarely used. Zero-record channels are still ignored by the unforwarded report because they are not evidence of missed data yet.
 
 The channel names are the Windows Event Log tree paths, for example:
 
