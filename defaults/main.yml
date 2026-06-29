@@ -19,12 +19,16 @@ winlogbeat_graylog_host: graylog.example.com
 winlogbeat_graylog_port: 5044
 
 # Event log channels (Windows)
-# Select from curated groups by default. Set winlogbeat_event_logs directly
-# if you need a complete manual override.
-winlogbeat_event_log_groups:
-  - baseline
-  - powershell
-  - task_scheduler
+# Collect all built-in curated groups by default. Override this list to select
+# only specific categories, or set winlogbeat_event_logs directly if you need a
+# complete manual channel override.
+winlogbeat_event_log_groups: "{{ winlogbeat_event_log_group_definitions.keys() | list }}"
+
+# Example: collect only a small baseline set.
+# winlogbeat_event_log_groups:
+#   - baseline
+#   - powershell
+#   - task_scheduler
 
 # Validate event channels during deployment.
 winlogbeat_validate_event_channels: true
