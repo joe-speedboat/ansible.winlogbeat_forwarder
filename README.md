@@ -91,14 +91,49 @@ For the Beats input, enable **Do not add Beats type as prefix** so fields are no
 | `winlogbeat_event_log_groups` | `baseline`, `powershell`, `task_scheduler` | Curated event-log groups to collect |
 | `winlogbeat_event_log_group_definitions` | see defaults | Built-in group-to-channel mapping |
 | `winlogbeat_event_logs` | unset | Complete manual event-channel override; if set, groups are ignored |
-| `winlogbeat_validate_event_channels` | `true` | Report configured channels missing on the target |
+| `winlogbeat_validate_event_channels` | `true` | Validate target event-channel availability during deployment |
+| `winlogbeat_report_unforwarded_event_channels` | `true` | Report target channels that contain records but are not selected for forwarding |
 | `winlogbeat_service_name` | `winlogbeat` | Windows service name |
 | `winlogbeat_service_state` | `started` | Desired service state |
 | `winlogbeat_service_enabled` | `true` | Auto-start on boot |
 
 Default groups collect Application, System, Security, PowerShell, and Task Scheduler. Optional groups include `applocker`, `rds`, `user_profile`, `fslogix`, `citrix`, `code_integrity`, `laps`, and `storage`.
 
-## Checking Missing Windows Event Log Channels
+## Checking Windows Event Log Coverage
+
+The role checks event-log coverage in two directions:
+
+1. Selected channels that are missing on the target.
+2. Target channels that contain records on Windows but are not selected for Winlogbeat forwarding to Graylog.
+
+The second report is the useful one for finding logs that already contain events on a server but are not currently collected. During deployment, the role prints:
+
+```text
+Windows Event Log channels with records on <host> but not selected for Winlogbeat forwarding:
+configured_count=<number>
+unforwarded_count=<number>
+[<channel path> (records=<count>), <channel path> (records=<count>), ...]
+```
+
+Channels with zero records are ignored by this report. They exist in Event Viewer, but they are not evidence of missed data yet.
+
+The channel names are the Windows Event Log tree paths, for example:
+
+```text
+Application (records=123)
+Security (records=456)
+System (records=789)
+Microsoft-Windows-TerminalServices-LocalSessionManager/Operational (records=12)
+Microsoft-Windows-WinRM/Operational (records=34)
+```
+
+Use this output to decide whether a host class needs another group in `winlogbeat_event_log_groups`, or a direct `winlogbeat_event_logs` override.
+
+Set this to disable the coverage report while keeping selected-channel validation enabled:
+
+```yaml
+winlogbeat_report_unforwarded_event_channels: false
+```
 
 The role only reports missing channels that are part of the **effective Winlogbeat configuration**. It does not compare against every possible built-in group.
 

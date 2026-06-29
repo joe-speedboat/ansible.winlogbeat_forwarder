@@ -57,10 +57,40 @@
 
 - name: Calculate missing Winlogbeat event channels
   ansible.builtin.set_fact:
+    winlogbeat_configured_event_channel_names: >-
+      {{ winlogbeat_event_logs_effective | map(attribute='name') | list | unique | sort }}
     winlogbeat_missing_event_channels: >-
       {{ (winlogbeat_event_logs_effective | map(attribute='name') | list)
          | difference(winlogbeat_available_event_channels_result.stdout_lines | default([])) }}
   when: winlogbeat_validate_event_channels | bool
+
+- name: List populated Windows Event Log channels not forwarded to Graylog
+  ansible.windows.win_shell: |
+    $configuredJson = @'
+    {{ winlogbeat_configured_event_channel_names | to_json }}
+    '@
+    $configuredChannels = $configuredJson | ConvertFrom-Json
+    $configuredSet = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::OrdinalIgnoreCase)
+    foreach ($channel in $configuredChannels) {
+      [void]$configuredSet.Add([string]$channel)
+    }
+
+    Get-WinEvent -ListLog * -ErrorAction SilentlyContinue |
+      Where-Object { $_.RecordCount -gt 0 -and -not $configuredSet.Contains($_.LogName) } |
+      Sort-Object LogName |
+      ForEach-Object { "{0} (records={1})" -f $_.LogName, $_.RecordCount }
+  register: winlogbeat_unforwarded_event_channels_result
+  changed_when: false
+  when:
+    - winlogbeat_validate_event_channels | bool
+    - winlogbeat_report_unforwarded_event_channels | bool
+
+- name: Store Windows Event Log unforwarded channel report
+  ansible.builtin.set_fact:
+    winlogbeat_unforwarded_event_channel_report: "{{ winlogbeat_unforwarded_event_channels_result.stdout_lines | default([]) }}"
+  when:
+    - winlogbeat_validate_event_channels | bool
+    - winlogbeat_report_unforwarded_event_channels | bool
 
 - name: Report missing Winlogbeat event channels
   ansible.builtin.debug:
@@ -70,4 +100,16 @@
   when:
     - winlogbeat_validate_event_channels | bool
     - winlogbeat_missing_event_channels | length > 0
+
+- name: Report Windows Event Log channels not forwarded to Graylog
+  ansible.builtin.debug:
+    msg:
+      - "Windows Event Log channels with records on {{ inventory_hostname }} but not selected for Winlogbeat forwarding:"
+      - "configured_count={{ winlogbeat_configured_event_channel_names | length }}"
+      - "unforwarded_count={{ winlogbeat_unforwarded_event_channel_report | length }}"
+      - "{{ winlogbeat_unforwarded_event_channel_report }}"
+  when:
+    - winlogbeat_validate_event_channels | bool
+    - winlogbeat_report_unforwarded_event_channels | bool
+    - winlogbeat_unforwarded_event_channel_report | length > 0
 ...
