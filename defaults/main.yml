@@ -26,8 +26,13 @@ winlogbeat_event_log_groups:
   - powershell
   - task_scheduler
 
-# Validate configured channels during deployment and report missing channels.
+# Validate event channels during deployment.
 winlogbeat_validate_event_channels: true
+
+# Report target channels that contain records but are not selected for
+# Winlogbeat forwarding. This helps identify logs that exist on the host and
+# are not currently forwarded to Graylog.
+winlogbeat_report_unforwarded_event_channels: true
 
 winlogbeat_event_log_group_definitions:
   baseline:
