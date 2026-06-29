@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+No unreleased changes.
+
+## [v1.1.0] - 2026-06-29
+
 ### Changed
 
 - Add configured event-log channel details to the coverage report, including per-channel record counts and missing status.
