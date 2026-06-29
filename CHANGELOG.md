@@ -2,7 +2,9 @@
 
 ## [Unreleased]
 
-No unreleased changes.
+### Changed
+
+- Add more optional Windows event-log groups from additional production coverage reports, including certificates/identity, diagnostics, file services, Hyper-V, OpenSSH, printing, remote assistance, security hardening, setup/provisioning, time service, volume shadow copy, Exchange, and expanded RDS/SMB/storage/network coverage.
 
 ## [v1.0.1] - 2026-06-29
 

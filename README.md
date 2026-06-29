@@ -97,7 +97,7 @@ For the Beats input, enable **Do not add Beats type as prefix** so fields are no
 | `winlogbeat_service_state` | `started` | Desired service state |
 | `winlogbeat_service_enabled` | `true` | Auto-start on boot |
 
-Default groups collect Application, System, Security, PowerShell, and Task Scheduler. Optional groups include `applocker`, `rds`, `user_profile`, `fslogix`, `citrix`, `code_integrity`, `laps`, `storage`, `remote_management`, `defender_firewall`, `windows_update`, `network`, `smb`, `device_lifecycle`, `diagnostics`, `identity`, and `server_manager`.
+Default groups collect Application, System, Security, PowerShell, and Task Scheduler. Optional groups include `applocker`, `rds`, `user_profile`, `fslogix`, `citrix`, `code_integrity`, `laps`, `storage`, `remote_management`, `defender_firewall`, `windows_update`, `network`, `smb`, `device_lifecycle`, `diagnostics`, `identity`, `server_manager`, `file_services`, `hyper_v`, `printing`, `remote_assistance`, `security_hardening`, `setup_provisioning`, `time_service`, `volume_shadow_copy`, `openssh`, and `exchange`.
 
 ## Checking Windows Event Log Coverage
 

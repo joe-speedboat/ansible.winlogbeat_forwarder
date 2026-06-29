@@ -111,6 +111,16 @@ device_lifecycle
 diagnostics
 identity
 server_manager
+file_services
+hyper_v
+printing
+remote_assistance
+security_hardening
+setup_provisioning
+time_service
+volume_shadow_copy
+openssh
+exchange
 ```
 
 ## Event-log coverage reporting
@@ -178,7 +188,7 @@ smb:
   - name: Microsoft-Windows-SMBServer/Operational
 ```
 
-Be conservative with noisy channels. Do not add channels just because they have records. Many AppX, Shell, Store, telemetry, licensing, and diagnostic internals may be high-volume but low-value for infrastructure monitoring. Add them only if there is a clear operational requirement.
+Be conservative with noisy channels. Do not add channels just because they have records. Many AppX, Shell, Store, telemetry, licensing, and desktop-consumer internals may be high-volume but low-value for infrastructure monitoring. Add them only if there is a clear operational requirement.
 
 ## Validation workflow
 

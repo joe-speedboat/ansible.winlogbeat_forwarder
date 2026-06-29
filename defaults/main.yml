@@ -43,9 +43,11 @@ winlogbeat_event_log_group_definitions:
   powershell:
     - name: Microsoft-Windows-PowerShell/Operational
     - name: Windows PowerShell
+    - name: PowerShellCore/Operational
 
   task_scheduler:
     - name: Microsoft-Windows-TaskScheduler/Operational
+    - name: Microsoft-Windows-TaskScheduler/Maintenance
 
   applocker:
     - name: Microsoft-Windows-AppLocker/EXE and DLL
@@ -59,6 +61,9 @@ winlogbeat_event_log_group_definitions:
     - name: Microsoft-Windows-TerminalServices-LocalSessionManager/Operational
     - name: Microsoft-Windows-RemoteDesktopServices-RdpCoreTS/Operational
     - name: Microsoft-Windows-RemoteDesktopServices-SessionServices/Operational
+    - name: Microsoft-Windows-TerminalServices-PnPDevices/Admin
+    - name: Microsoft-Windows-TerminalServices-RDPClient/Operational
+    - name: Microsoft-Windows-TerminalServices-ServerUSBDevices/Admin
 
   user_profile:
     - name: Microsoft-Windows-User Profile Service/Operational
@@ -86,9 +91,15 @@ winlogbeat_event_log_group_definitions:
   storage:
     - name: Microsoft-Windows-Ntfs/Operational
     - name: Microsoft-Windows-Ntfs/WHC
+    - name: Microsoft-Windows-Storage-ClassPnP/Operational
+    - name: Microsoft-Windows-StorageManagement/Operational
+    - name: Microsoft-Windows-StorageManagement-PartUtil/Operational
     - name: Microsoft-Windows-Storage-Storport/Health
     - name: Microsoft-Windows-Storage-Storport/Operational
     - name: Microsoft-Windows-StorageSpaces-Driver/Operational
+    - name: Microsoft-Windows-StorageVolume/Operational
+    - name: Microsoft-Windows-Storsvc/Diagnostic
+    - name: Microsoft-Windows-VHDMP-Operational
 
   remote_management:
     - name: Microsoft-Windows-WinRM/Operational
@@ -104,39 +115,112 @@ winlogbeat_event_log_group_definitions:
 
   network:
     - name: Microsoft-Windows-Dhcp-Client/Admin
+    - name: Microsoft-Windows-Dhcpv6-Client/Admin
     - name: Microsoft-Windows-NCSI/Operational
     - name: Microsoft-Windows-NetworkProfile/Operational
+    - name: Microsoft-Windows-NlaSvc/Operational
     - name: Microsoft-Windows-Wcmsvc/Operational
     - name: Microsoft-Windows-WinINet-Config/ProxyConfigChanged
+    - name: Microsoft-Windows-Winsock-WS2HELP/Operational
 
   smb:
     - name: Microsoft-Windows-SmbClient/Connectivity
+    - name: Microsoft-Windows-SMBClient/Operational
+    - name: Microsoft-Windows-SmbClient/Security
+    - name: Microsoft-Windows-SMBServer/Connectivity
     - name: Microsoft-Windows-SMBServer/Operational
 
   device_lifecycle:
+    - name: Microsoft-Windows-DeviceManagement-Enterprise-Diagnostics-Provider/Admin
+    - name: Microsoft-Windows-DeviceManagement-Enterprise-Diagnostics-Provider/Operational
     - name: Microsoft-Windows-DeviceSetupManager/Admin
     - name: Microsoft-Windows-DeviceSetupManager/Operational
     - name: Microsoft-Windows-Kernel-PnP/Configuration
     - name: Microsoft-Windows-Kernel-PnP/Device Management
+    - name: Microsoft-Windows-Kernel-PnP/Driver Watchdog
+    - name: Microsoft-Windows-PCI/Operational
     - name: Microsoft-Windows-UserPnp/DeviceInstall
 
   diagnostics:
     - name: Microsoft-Windows-DataIntegrityScan/Admin
     - name: Microsoft-Windows-Diagnosis-DPS/Operational
+    - name: Microsoft-Windows-Diagnosis-PCW/Operational
+    - name: Microsoft-Windows-Diagnosis-Scheduled/Operational
+    - name: Microsoft-Windows-Diagnosis-Scripted/Admin
+    - name: Microsoft-Windows-Diagnosis-Scripted/Operational
+    - name: Microsoft-Windows-Fault-Tolerant-Heap/Operational
     - name: Microsoft-Windows-Kernel-Boot/Operational
+    - name: Microsoft-Windows-Kernel-Cache/Operational
+    - name: Microsoft-Windows-Kernel-Dump/Operational
+    - name: Microsoft-Windows-Kernel-EventTracing/Admin
+    - name: Microsoft-Windows-Kernel-IO/Operational
+    - name: Microsoft-Windows-Kernel-ShimEngine/Operational
     - name: Microsoft-Windows-Kernel-WHEA/Operational
+    - name: Microsoft-Windows-Partition/Diagnostic
+    - name: Microsoft-Windows-Perflib/Operational
     - name: Microsoft-Windows-Resource-Exhaustion-Detector/Operational
+    - name: Microsoft-Windows-Resource-Exhaustion-Resolver/Operational
+    - name: Microsoft-Windows-WER-Diag/Operational
     - name: Microsoft-Windows-WER-PayloadHealth/Operational
+    - name: Microsoft-Windows-WerKernel/Operational
 
   identity:
     - name: Microsoft-Windows-AAD/Operational
+    - name: Microsoft-Windows-CertificateServicesClient-Lifecycle-System/Operational
+    - name: Microsoft-Windows-CertificateServicesClient-Lifecycle-User/Operational
+    - name: Microsoft-Windows-Crypto-DPAPI/Operational
+    - name: Microsoft-Windows-Crypto-NCrypt/KeyMgmt
+    - name: Microsoft-Windows-Crypto-NCrypt/Operational
     - name: Microsoft-Windows-HelloForBusiness/Operational
+    - name: Microsoft-Windows-LiveId/Operational
+    - name: Microsoft-Windows-NTLM/Operational
+    - name: Microsoft-Windows-Security-Netlogon/Operational
+    - name: Microsoft-Windows-SmartCard-DeviceEnum/Operational
     - name: Microsoft-Windows-User Device Registration/Admin
 
   server_manager:
     - name: Microsoft-Windows-ServerManager-DeploymentProvider/Operational
     - name: Microsoft-Windows-ServerManager-MgmtProvider/Operational
     - name: Microsoft-Windows-ServerManager-MultiMachine/Operational
+
+  file_services:
+    - name: Microsoft-Windows-FileServices-ServerManager-EventProvider/Operational
+    - name: Microsoft-Windows-FileShareShadowCopyProvider/Operational
+
+  hyper_v:
+    - name: Microsoft-Windows-Hyper-V-Hypervisor-Admin
+
+  printing:
+    - name: Microsoft-Windows-PrintService/Admin
+
+  remote_assistance:
+    - name: Microsoft-Windows-RemoteAssistance/Operational
+
+  security_hardening:
+    - name: Microsoft-Windows-Security-Mitigations/KernelMode
+    - name: Microsoft-Windows-Security-SPP-UX-GenuineCenter-Logging/Operational
+    - name: Microsoft-Windows-Security-SPP-UX-Notifications/ActionCenter
+    - name: Microsoft-Windows-UAC/Operational
+    - name: Microsoft-Windows-UAC-FileVirtualization/Operational
+
+  setup_provisioning:
+    - name: Microsoft-Windows-LanguagePackSetup/Operational
+    - name: Microsoft-Windows-MUI/Operational
+    - name: Microsoft-Windows-Provisioning-Diagnostics-Provider/Admin
+    - name: Microsoft-Windows-TZSync/Operational
+    - name: Setup
+
+  time_service:
+    - name: Microsoft-Windows-Time-Service/Operational
+
+  volume_shadow_copy:
+    - name: Microsoft-Windows-VolumeSnapshot-Driver/Operational
+
+  openssh:
+    - name: OpenSSH/Operational
+
+  exchange:
+    - name: MSExchange Management
 
 # Service management (Windows)
 winlogbeat_service_name: winlogbeat
