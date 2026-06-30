@@ -27,9 +27,11 @@
   ansible.builtin.assert:
     that:
       - winlogbeat_download_mode in ['target', 'delegated']
+      - winlogbeat_download_delegate_platform in ['auto', 'posix', 'windows']
     fail_msg: >
       Unsupported winlogbeat_download_mode '{{ winlogbeat_download_mode }}'.
-      Supported values are 'target' and 'delegated'.
+      Supported download modes are 'target' and 'delegated'. Supported delegate
+      platforms are 'auto', 'posix', and 'windows'.
 
 - name: Download Winlogbeat ZIP on Windows target
   ansible.windows.win_get_url:
@@ -43,19 +45,55 @@
   delay: 5
   when: winlogbeat_download_mode == 'target'
 
-- name: Ensure delegated Winlogbeat cache directory exists
+- name: Set delegated Winlogbeat download facts
+  ansible.builtin.set_fact:
+    _winlogbeat_download_delegate_is_windows: >-
+      {{ winlogbeat_download_delegate_platform == 'windows' or
+         (winlogbeat_download_delegate_platform == 'auto' and
+          (hostvars[winlogbeat_download_delegate].ansible_connection | default('')) in ['winrm', 'psrp']) }}
+    _winlogbeat_download_delegate_cache_dir: >-
+      {{ winlogbeat_download_delegate_cache_dir
+         if (winlogbeat_download_delegate_cache_dir | length > 0)
+         else ('C:\Windows\Temp\winlogbeat-delegate'
+               if (winlogbeat_download_delegate_platform == 'windows' or
+                   (winlogbeat_download_delegate_platform == 'auto' and
+                    (hostvars[winlogbeat_download_delegate].ansible_connection | default('')) in ['winrm', 'psrp']))
+               else '/var/cache/ansible/winlogbeat') }}
+  when: winlogbeat_download_mode == 'delegated'
+
+- name: Set delegated Winlogbeat ZIP path
+  ansible.builtin.set_fact:
+    _winlogbeat_download_delegate_zip_path: >-
+      {{ _winlogbeat_download_delegate_cache_dir ~ '\\' ~ winlogbeat_artifact_name ~ '.zip'
+         if _winlogbeat_download_delegate_is_windows | bool
+         else _winlogbeat_download_delegate_cache_dir ~ '/' ~ winlogbeat_artifact_name ~ '.zip' }}
+  when: winlogbeat_download_mode == 'delegated'
+
+- name: Ensure delegated Winlogbeat cache directory exists on POSIX host
   ansible.builtin.file:
-    path: '{{ winlogbeat_download_delegate_cache_dir }}'
+    path: '{{ _winlogbeat_download_delegate_cache_dir }}'
     state: directory
     mode: '0755'
   delegate_to: '{{ winlogbeat_download_delegate }}'
   run_once: true
-  when: winlogbeat_download_mode == 'delegated'
+  when:
+    - winlogbeat_download_mode == 'delegated'
+    - not _winlogbeat_download_delegate_is_windows | bool
 
-- name: Download Winlogbeat ZIP on delegated host
+- name: Ensure delegated Winlogbeat cache directory exists on Windows host
+  ansible.windows.win_file:
+    path: '{{ _winlogbeat_download_delegate_cache_dir }}'
+    state: directory
+  delegate_to: '{{ winlogbeat_download_delegate }}'
+  run_once: true
+  when:
+    - winlogbeat_download_mode == 'delegated'
+    - _winlogbeat_download_delegate_is_windows | bool
+
+- name: Download Winlogbeat ZIP on delegated POSIX host
   ansible.builtin.get_url:
     url: '{{ winlogbeat_download_url }}'
-    dest: '{{ winlogbeat_download_delegate_cache_dir }}/{{ winlogbeat_artifact_name }}.zip'
+    dest: '{{ _winlogbeat_download_delegate_zip_path }}'
     checksum: >-
       {{ ('sha512:' ~ winlogbeat_checksum[winlogbeat_version])
          if (winlogbeat_checksum[winlogbeat_version] is defined and winlogbeat_checksum[winlogbeat_version] | length > 0)
@@ -67,7 +105,25 @@
   delay: 5
   delegate_to: '{{ winlogbeat_download_delegate }}'
   run_once: true
-  when: winlogbeat_download_mode == 'delegated'
+  when:
+    - winlogbeat_download_mode == 'delegated'
+    - not _winlogbeat_download_delegate_is_windows | bool
+
+- name: Download Winlogbeat ZIP on delegated Windows host
+  ansible.windows.win_get_url:
+    url: '{{ winlogbeat_download_url }}'
+    dest: '{{ _winlogbeat_download_delegate_zip_path }}'
+    checksum: "{{ winlogbeat_checksum[winlogbeat_version] | default('') }}"
+    checksum_algorithm: sha512
+  register: _wb_delegated_windows_download
+  until: _wb_delegated_windows_download is success
+  retries: 3
+  delay: 5
+  delegate_to: '{{ winlogbeat_download_delegate }}'
+  run_once: true
+  when:
+    - winlogbeat_download_mode == 'delegated'
+    - _winlogbeat_download_delegate_is_windows | bool
 
 - name: Ensure controller Winlogbeat cache directory exists
   ansible.builtin.file:
@@ -80,7 +136,7 @@
 
 - name: Fetch delegated Winlogbeat ZIP into controller cache
   ansible.builtin.fetch:
-    src: '{{ winlogbeat_download_delegate_cache_dir }}/{{ winlogbeat_artifact_name }}.zip'
+    src: '{{ _winlogbeat_download_delegate_zip_path }}'
     dest: '{{ winlogbeat_controller_cache_dir }}/{{ winlogbeat_artifact_name }}.zip'
     flat: true
   delegate_to: '{{ winlogbeat_download_delegate }}'

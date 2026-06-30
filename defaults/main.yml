@@ -20,7 +20,10 @@ winlogbeat_download_dir: 'C:\Windows\Temp\winlogbeat'
 # the ZIP into winlogbeat_controller_cache_dir, then copies it to each target.
 winlogbeat_download_mode: target
 winlogbeat_download_delegate: localhost
-winlogbeat_download_delegate_cache_dir: /var/cache/ansible/winlogbeat
+# auto detects WinRM/PSRP delegates as Windows; use posix or windows to force.
+winlogbeat_download_delegate_platform: auto
+# Leave empty to use a platform-specific default on the delegated host.
+winlogbeat_download_delegate_cache_dir: ''
 winlogbeat_controller_cache_dir: "{{ lookup('env', 'HOME') }}/.cache/ansible/winlogbeat"
 
 # Graylog Beats input (Windows)

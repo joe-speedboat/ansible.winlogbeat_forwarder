@@ -92,9 +92,12 @@ For air-gapped Ansible controllers where another host has internet access, use d
 ```yaml
 winlogbeat_download_mode: delegated
 winlogbeat_download_delegate: downloadhost.example.com
+winlogbeat_download_delegate_platform: auto
 winlogbeat_download_delegate_cache_dir: /var/cache/ansible/winlogbeat
 winlogbeat_controller_cache_dir: /var/tmp/ansible-winlogbeat-cache
 ```
+
+Delegates can be POSIX or Windows hosts. Auto-detection treats WinRM/PSRP delegates as Windows. For Windows delegates, use `winlogbeat_download_delegate_platform: windows` when inventory connection detection is ambiguous and use a Windows cache path such as `C:\Windows\Temp\winlogbeat-delegate`.
 
 Delegated mode flow:
 

@@ -85,7 +85,8 @@ For the Beats input, enable **Do not add Beats type as prefix** so fields are no
 | `winlogbeat_download_dir` | `C:\Windows\Temp\winlogbeat` | Download directory |
 | `winlogbeat_download_mode` | `target` | Download strategy: `target` or `delegated` |
 | `winlogbeat_download_delegate` | `localhost` | Host that downloads the ZIP when `winlogbeat_download_mode: delegated` |
-| `winlogbeat_download_delegate_cache_dir` | `/var/cache/ansible/winlogbeat` | Cache directory on the delegated download host |
+| `winlogbeat_download_delegate_platform` | `auto` | Delegate platform: `auto`, `posix`, or `windows` |
+| `winlogbeat_download_delegate_cache_dir` | platform-specific | Cache directory on the delegated download host |
 | `winlogbeat_controller_cache_dir` | `{{ lookup('env', 'HOME') }}/.cache/ansible/winlogbeat` | Controller cache used while transferring the delegated ZIP to Windows targets |
 
 By default each Windows target downloads the Winlogbeat ZIP directly from `winlogbeat_download_url`:
@@ -100,6 +101,16 @@ For environments where Windows targets or the Ansible controller cannot access t
 winlogbeat_download_mode: delegated
 winlogbeat_download_delegate: downloadhost.example.com
 winlogbeat_download_delegate_cache_dir: /var/cache/ansible/winlogbeat
+winlogbeat_controller_cache_dir: /var/tmp/ansible-winlogbeat-cache
+```
+
+If the delegated download host is a Windows host, either let the role auto-detect WinRM/PSRP or force the platform:
+
+```yaml
+winlogbeat_download_mode: delegated
+winlogbeat_download_delegate: windows-downloadhost.example.com
+winlogbeat_download_delegate_platform: windows
+winlogbeat_download_delegate_cache_dir: 'C:\Windows\Temp\winlogbeat-delegate'
 winlogbeat_controller_cache_dir: /var/tmp/ansible-winlogbeat-cache
 ```
 
