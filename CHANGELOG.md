@@ -2,7 +2,9 @@
 
 ## [Unreleased]
 
-No unreleased changes.
+### Added
+
+- Add delegated Winlogbeat ZIP download mode for air-gapped controllers, allowing a separate download host to fetch the artifact before it is copied to Windows targets.
 
 ## [v1.1.1] - 2026-06-30
 

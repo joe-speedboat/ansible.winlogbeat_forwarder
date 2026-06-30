@@ -14,6 +14,15 @@ winlogbeat_data_dir: 'C:\ProgramData\Winlogbeat'
 winlogbeat_log_dir: 'C:\ProgramData\Winlogbeat\Logs'
 winlogbeat_download_dir: 'C:\Windows\Temp\winlogbeat'
 
+# Download handling.
+# target: current behavior, each Windows target downloads the ZIP directly.
+# delegated: winlogbeat_download_delegate downloads once, the controller fetches
+# the ZIP into winlogbeat_controller_cache_dir, then copies it to each target.
+winlogbeat_download_mode: target
+winlogbeat_download_delegate: localhost
+winlogbeat_download_delegate_cache_dir: /var/cache/ansible/winlogbeat
+winlogbeat_controller_cache_dir: "{{ lookup('env', 'HOME') }}/.cache/ansible/winlogbeat"
+
 # Graylog Beats input (Windows)
 winlogbeat_graylog_host: graylog.example.com
 winlogbeat_graylog_port: 5044

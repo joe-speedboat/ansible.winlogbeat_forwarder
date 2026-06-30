@@ -79,6 +79,33 @@ winlogbeat_report_unforwarded_event_channels: true
 
 `winlogbeat_event_log_groups` is the preferred interface for normal use. It selects curated groups from `winlogbeat_event_log_group_definitions`.
 
+## Download modes
+
+The default download mode is `target`; each Windows target downloads the ZIP directly with `win_get_url`:
+
+```yaml
+winlogbeat_download_mode: target
+```
+
+For air-gapped Ansible controllers where another host has internet access, use delegated mode:
+
+```yaml
+winlogbeat_download_mode: delegated
+winlogbeat_download_delegate: downloadhost.example.com
+winlogbeat_download_delegate_cache_dir: /var/cache/ansible/winlogbeat
+winlogbeat_controller_cache_dir: /var/tmp/ansible-winlogbeat-cache
+```
+
+Delegated mode flow:
+
+```text
+download delegate -> artifacts.elastic.co
+download delegate -> controller cache via fetch
+controller cache -> Windows target via win_copy
+```
+
+Keep this as a single delegated host, not a fallback list, unless the role explicitly needs multi-source failover later. Always verify the checksum on the Windows target before extraction.
+
 The default group selector intentionally expands to all built-in curated groups. Users can override it to collect only a smaller baseline set:
 
 ```yaml
