@@ -118,13 +118,25 @@ time_service
 volume_shadow_copy
 openssh
 exchange
+application_platform
+application_compatibility
+appx_store
+desktop_experience
+telemetry_privacy
+licensing
+domain_services
+dfs
+dns
+dhcp_server
+deployment_services
+application_specific
 ```
 
 ## Event-log coverage reporting
 
-The role reports two coverage signals during validation:
+The role reports two coverage signals during validation in one combined report:
 
-1. Configured channels that are missing on the target.
+1. Configured channels, including `records=<count>`, `records=0`, or `missing`.
 2. Target channels that contain records but are not selected for Winlogbeat forwarding.
 
 The second report is meant to help operators discover logs that exist on a host but are not currently forwarded to Graylog. It prints Event Viewer paths with record counts, for example:

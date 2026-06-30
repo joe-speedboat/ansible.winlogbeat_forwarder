@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Add all non-zero unforwarded production channels from the latest coverage output into curated default event-log groups.
 - Allow Windows Server 2019 targets by lowering the minimum supported Windows build to `10.0.17763`.
 - Remove the redundant compact missing-channel report because the full channel coverage report already marks configured paths as `missing`.
 
