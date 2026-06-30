@@ -18,9 +18,9 @@
 - name: Assert supported Windows release
   ansible.builtin.assert:
     that:
-      - ansible_distribution_version is version('10.0.20348', '>=')
+      - ansible_distribution_version is version('10.0.17763', '>=')
     fail_msg: >
-      This role requires Windows Server 2022 or newer.
+      This role requires Windows Server 2019 or newer.
       Detected: {{ ansible_os_name }} {{ ansible_distribution_version }}
 
 - name: Initialize effective Winlogbeat event logs

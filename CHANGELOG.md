@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Allow Windows Server 2019 targets by lowering the minimum supported Windows build to `10.0.17763`.
 - Remove the redundant compact missing-channel report because the full channel coverage report already marks configured paths as `missing`.
 
 ## [v1.1.0] - 2026-06-29

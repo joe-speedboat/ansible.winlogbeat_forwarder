@@ -26,7 +26,7 @@ ansible-galaxy collection list | grep -E '^(ansible\.windows|community\.windows)
 
 ### Target Nodes
 
-- Windows Server 2022 / 2025
+- Windows Server 2019 / 2022 / 2025
 - WinRM configured
 - Outbound access to the Graylog Beats input, default `5044/tcp`
 
