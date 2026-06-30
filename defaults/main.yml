@@ -68,6 +68,10 @@ winlogbeat_event_log_group_definitions:
     - name: Microsoft-Windows-TerminalServices-PnPDevices/Admin
     - name: Microsoft-Windows-TerminalServices-RDPClient/Operational
     - name: Microsoft-Windows-TerminalServices-ServerUSBDevices/Admin
+    - name: Microsoft-Rdms-UI/Operational
+    - name: Microsoft-Windows-TerminalServices-Licensing/Admin
+    - name: Microsoft-Windows-TerminalServices-Licensing/Operational
+    - name: Microsoft-Windows-TerminalServices-Printers/Admin
 
   user_profile:
     - name: Microsoft-Windows-User Profile Service/Operational
@@ -85,6 +89,9 @@ winlogbeat_event_log_group_definitions:
     - name: Citrix-Device-Redirector/Admin
     - name: Citrix-CDF-ErrorReporter/Admin
     - name: Citrix-HostCore-Remote Credential Guard/Operational
+    - name: Citrix Delivery Services
+    - name: Citrix-XenDesktop-BrokerMonitor/Operational
+    - name: Citrix-XenDesktop-MCSMonitor/Operational
 
   code_integrity:
     - name: Microsoft-Windows-CodeIntegrity/Operational
@@ -108,6 +115,7 @@ winlogbeat_event_log_group_definitions:
   remote_management:
     - name: Microsoft-Windows-WinRM/Operational
     - name: Microsoft-Windows-WMI-Activity/Operational
+    - name: Microsoft-Windows-Forwarding/Operational
 
   defender_firewall:
     - name: Microsoft-Windows-Windows Defender/Operational
@@ -120,19 +128,24 @@ winlogbeat_event_log_group_definitions:
   network:
     - name: Microsoft-Windows-Dhcp-Client/Admin
     - name: Microsoft-Windows-Dhcpv6-Client/Admin
+    - name: Microsoft-Windows-IKE/Operational
     - name: Microsoft-Windows-NCSI/Operational
+    - name: Microsoft-Windows-NetworkLocationWizard/Operational
     - name: Microsoft-Windows-NetworkProfile/Operational
     - name: Microsoft-Windows-NlaSvc/Operational
     - name: Microsoft-Windows-Wcmsvc/Operational
+    - name: Microsoft-Windows-WFP/Operational
     - name: Microsoft-Windows-WinINet-Config/ProxyConfigChanged
     - name: Microsoft-Windows-Winsock-WS2HELP/Operational
 
   smb:
+    - name: Microsoft-Windows-SmbClient/Audit
     - name: Microsoft-Windows-SmbClient/Connectivity
     - name: Microsoft-Windows-SMBClient/Operational
     - name: Microsoft-Windows-SmbClient/Security
     - name: Microsoft-Windows-SMBServer/Connectivity
     - name: Microsoft-Windows-SMBServer/Operational
+    - name: Microsoft-Windows-SMBServer/Security
 
   device_lifecycle:
     - name: Microsoft-Windows-DeviceManagement-Enterprise-Diagnostics-Provider/Admin
@@ -146,12 +159,16 @@ winlogbeat_event_log_group_definitions:
     - name: Microsoft-Windows-UserPnp/DeviceInstall
 
   diagnostics:
+    - name: Microsoft-Windows-BestPractices/Operational
+    - name: Microsoft-Windows-Cleanmgr/Diagnostic
     - name: Microsoft-Windows-DataIntegrityScan/Admin
     - name: Microsoft-Windows-Diagnosis-DPS/Operational
+    - name: Microsoft-Windows-Diagnosis-PLA/Operational
     - name: Microsoft-Windows-Diagnosis-PCW/Operational
     - name: Microsoft-Windows-Diagnosis-Scheduled/Operational
     - name: Microsoft-Windows-Diagnosis-Scripted/Admin
     - name: Microsoft-Windows-Diagnosis-Scripted/Operational
+    - name: Microsoft-Windows-Diagnosis-ScriptedDiagnosticsProvider/Operational
     - name: Microsoft-Windows-Fault-Tolerant-Heap/Operational
     - name: Microsoft-Windows-Kernel-Boot/Operational
     - name: Microsoft-Windows-Kernel-Cache/Operational
@@ -167,20 +184,25 @@ winlogbeat_event_log_group_definitions:
     - name: Microsoft-Windows-WER-Diag/Operational
     - name: Microsoft-Windows-WER-PayloadHealth/Operational
     - name: Microsoft-Windows-WerKernel/Operational
+    - name: Microsoft-Windows-WindowsSystemAssessmentTool/Operational
 
   identity:
     - name: Microsoft-Windows-AAD/Operational
+    - name: Microsoft-Windows-Authentication User Interface/Operational
     - name: Microsoft-Windows-CertificateServicesClient-Lifecycle-System/Operational
     - name: Microsoft-Windows-CertificateServicesClient-Lifecycle-User/Operational
+    - name: Microsoft-Windows-Crypto-DPAPI/BackUpKeySvc
     - name: Microsoft-Windows-Crypto-DPAPI/Operational
     - name: Microsoft-Windows-Crypto-NCrypt/KeyMgmt
     - name: Microsoft-Windows-Crypto-NCrypt/Operational
     - name: Microsoft-Windows-HelloForBusiness/Operational
+    - name: Microsoft-Windows-KdsSvc/Operational
     - name: Microsoft-Windows-LiveId/Operational
     - name: Microsoft-Windows-NTLM/Operational
     - name: Microsoft-Windows-Security-Netlogon/Operational
     - name: Microsoft-Windows-SmartCard-DeviceEnum/Operational
     - name: Microsoft-Windows-User Device Registration/Admin
+    - name: Microsoft-Windows-WebAuthN/Operational
 
   server_manager:
     - name: Microsoft-Windows-ServerManager-DeploymentProvider/Operational
@@ -195,12 +217,14 @@ winlogbeat_event_log_group_definitions:
     - name: Microsoft-Windows-Hyper-V-Hypervisor-Admin
 
   printing:
+    - name: Microsoft-Windows-PrintBRM/Admin
     - name: Microsoft-Windows-PrintService/Admin
 
   remote_assistance:
     - name: Microsoft-Windows-RemoteAssistance/Operational
 
   security_hardening:
+    - name: Microsoft-Windows-Security-LessPrivilegedAppContainer/Operational
     - name: Microsoft-Windows-Security-Mitigations/KernelMode
     - name: Microsoft-Windows-Security-SPP-UX-GenuineCenter-Logging/Operational
     - name: Microsoft-Windows-Security-SPP-UX-Notifications/ActionCenter
@@ -221,10 +245,83 @@ winlogbeat_event_log_group_definitions:
     - name: Microsoft-Windows-VolumeSnapshot-Driver/Operational
 
   openssh:
+    - name: OpenSSH/Admin
     - name: OpenSSH/Operational
 
   exchange:
     - name: MSExchange Management
+
+  application_platform:
+    - name: Microsoft-Windows-Application Server-Applications/Operational
+    - name: Microsoft-Windows-Bits-Client/Operational
+    - name: Microsoft-Windows-Containers-BindFlt/Operational
+    - name: Microsoft-Windows-Containers-Wcifs/Operational
+
+  application_compatibility:
+    - name: Microsoft-Windows-Application-Experience/Program-Compatibility-Assistant
+    - name: Microsoft-Windows-Application-Experience/Program-Telemetry
+
+  appx_store:
+    - name: Microsoft-Windows-AppModel-Runtime/Admin
+    - name: Microsoft-Windows-AppReadiness/Admin
+    - name: Microsoft-Windows-AppReadiness/Operational
+    - name: Microsoft-Windows-AppXDeployment/Operational
+    - name: Microsoft-Windows-AppXDeployment-Server/Operational
+    - name: Microsoft-Windows-AppXDeploymentServer/Operational
+    - name: Microsoft-Windows-AppXDeploymentServer/Restricted
+    - name: Microsoft-Windows-AppxPackaging/Operational
+    - name: Microsoft-Windows-StateRepository/Operational
+    - name: Microsoft-Windows-Store/Operational
+    - name: Microsoft-Windows-TWinUI/Operational
+
+  desktop_experience:
+    - name: Microsoft-Windows-Audio/Operational
+    - name: Microsoft-Windows-Audio/PlaybackManager
+    - name: Microsoft-Windows-BackgroundTaskInfrastructure/Operational
+    - name: Microsoft-Windows-Biometrics/Operational
+    - name: Microsoft-Windows-CloudFiles-Filter/Operational
+    - name: Microsoft-Windows-CloudRestoreLauncher/Operational
+    - name: Microsoft-Windows-CloudStore/Initialization
+    - name: Microsoft-Windows-CloudStore/Operational
+    - name: Microsoft-Windows-Known Folders API Service
+    - name: Microsoft-Windows-PushNotification-Platform/Operational
+    - name: Microsoft-Windows-ShellCommon-StartLayoutPopulation/Operational
+    - name: Microsoft-Windows-Shell-Core/AppDefaults
+    - name: Microsoft-Windows-Shell-Core/Operational
+    - name: Microsoft-Windows-Win32k/Operational
+
+  telemetry_privacy:
+    - name: Microsoft-Windows-Privacy-Auditing/Operational
+    - name: Microsoft-Windows-SystemDataArchiver/Diagnostic
+    - name: Microsoft-Windows-UniversalTelemetryClient/Operational
+
+  licensing:
+    - name: Microsoft-Client-Licensing-Platform/Admin
+
+  domain_services:
+    - name: Active Directory Web Services
+    - name: Directory Service
+    - name: Microsoft-Windows-DirectoryServices-Deployment/Operational
+
+  dfs:
+    - name: DFS Replication
+    - name: Microsoft-Windows-DFSN-Server/Admin
+
+  dns:
+    - name: DNS Server
+    - name: Microsoft-Windows-DNSServer/Audit
+
+  dhcp_server:
+    - name: DhcpAdminEvents
+    - name: Microsoft-Windows-Dhcp-Server/Operational
+
+  deployment_services:
+    - name: Microsoft-Windows-Deployment-Services-Diagnostics/Admin
+    - name: Microsoft-Windows-Deployment-Services-Diagnostics/Operational
+
+  application_specific:
+    - name: OAlerts
+    - name: PKS
 
 # Service management (Windows)
 winlogbeat_service_name: winlogbeat

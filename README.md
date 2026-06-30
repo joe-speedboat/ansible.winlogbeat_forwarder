@@ -106,11 +106,11 @@ winlogbeat_event_log_groups:
   - task_scheduler
 ```
 
-Built-in groups include `baseline`, `powershell`, `task_scheduler`, `applocker`, `rds`, `user_profile`, `fslogix`, `citrix`, `code_integrity`, `laps`, `storage`, `remote_management`, `defender_firewall`, `windows_update`, `network`, `smb`, `device_lifecycle`, `diagnostics`, `identity`, `server_manager`, `file_services`, `hyper_v`, `printing`, `remote_assistance`, `security_hardening`, `setup_provisioning`, `time_service`, `volume_shadow_copy`, `openssh`, and `exchange`.
+Built-in groups include `baseline`, `powershell`, `task_scheduler`, `applocker`, `rds`, `user_profile`, `fslogix`, `citrix`, `code_integrity`, `laps`, `storage`, `remote_management`, `defender_firewall`, `windows_update`, `network`, `smb`, `device_lifecycle`, `diagnostics`, `identity`, `server_manager`, `file_services`, `hyper_v`, `printing`, `remote_assistance`, `security_hardening`, `setup_provisioning`, `time_service`, `volume_shadow_copy`, `openssh`, `exchange`, `application_platform`, `application_compatibility`, `appx_store`, `desktop_experience`, `telemetry_privacy`, `licensing`, `domain_services`, `dfs`, `dns`, `dhcp_server`, `deployment_services`, and `application_specific`.
 
 ## Checking Windows Event Log Coverage
 
-The role checks event-log coverage in two directions:
+The role checks event-log coverage in two directions in a single report:
 
 1. Selected channels that are missing on the target.
 2. Target channels that contain records on Windows but are not selected for Winlogbeat forwarding to Graylog.
@@ -174,7 +174,7 @@ vars:
     - name: Microsoft-FSLogix-Apps/Operational
 ```
 
-During deployment, the role prints `Missing Winlogbeat event channels` only when at least one selected channel is absent. If no message appears, all selected channels were found.
+During deployment, the role marks selected channels as `(missing)` inside the configured-channel list when a selected channel is absent. There is no separate missing-only report.
 
 Use `ignore_missing_channel: false` when a channel is mandatory for a host class:
 
