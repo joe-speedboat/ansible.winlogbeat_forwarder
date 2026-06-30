@@ -83,6 +83,27 @@ For the Beats input, enable **Do not add Beats type as prefix** so fields are no
 | `winlogbeat_data_dir` | `C:\ProgramData\Winlogbeat` | Data directory |
 | `winlogbeat_log_dir` | `C:\ProgramData\Winlogbeat\Logs` | Log directory |
 | `winlogbeat_download_dir` | `C:\Windows\Temp\winlogbeat` | Download directory |
+| `winlogbeat_download_mode` | `target` | Download strategy: `target` or `delegated` |
+| `winlogbeat_download_delegate` | `localhost` | Host that downloads the ZIP when `winlogbeat_download_mode: delegated` |
+| `winlogbeat_download_delegate_cache_dir` | `/var/cache/ansible/winlogbeat` | Cache directory on the delegated download host |
+| `winlogbeat_controller_cache_dir` | `{{ lookup('env', 'HOME') }}/.cache/ansible/winlogbeat` | Controller cache used while transferring the delegated ZIP to Windows targets |
+
+By default each Windows target downloads the Winlogbeat ZIP directly from `winlogbeat_download_url`:
+
+```yaml
+winlogbeat_download_mode: target
+```
+
+For environments where Windows targets or the Ansible controller cannot access the internet, use a delegated download host that has internet access and Ansible connectivity:
+
+```yaml
+winlogbeat_download_mode: delegated
+winlogbeat_download_delegate: downloadhost.example.com
+winlogbeat_download_delegate_cache_dir: /var/cache/ansible/winlogbeat
+winlogbeat_controller_cache_dir: /var/tmp/ansible-winlogbeat-cache
+```
+
+In delegated mode, the delegated host downloads the ZIP once, the controller fetches it into a local cache, and the controller copies it to each Windows target over WinRM. The ZIP checksum is verified on the Windows target before extraction.
 
 ### Event Logs and Service
 
