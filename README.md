@@ -95,7 +95,7 @@ By default each Windows target downloads the Winlogbeat ZIP directly from `winlo
 winlogbeat_download_mode: target
 ```
 
-For environments where Windows targets or the Ansible controller cannot access the internet, use a delegated download host that has internet access and Ansible connectivity:
+For environments where Windows targets or the Ansible controller cannot access the internet, use a delegated download host that has internet access and Ansible connectivity. The controller does not download from the internet in this mode; it only fetches the already downloaded ZIP from the delegate and copies it to the Windows targets.
 
 ```yaml
 winlogbeat_download_mode: delegated
@@ -115,6 +115,8 @@ winlogbeat_controller_cache_dir: /var/tmp/ansible-winlogbeat-cache
 ```
 
 In delegated mode, the delegated host downloads the ZIP once, the controller fetches it into a local cache, and the controller copies it to each Windows target over WinRM. The ZIP checksum is verified on the Windows target before extraction.
+
+Use `winlogbeat_download_delegate_platform: windows` when the delegated downloader is a Windows host and inventory auto-detection is not reliable. The role then uses Windows modules on the delegate (`win_file` and `win_get_url`) instead of POSIX modules.
 
 ### Event Logs and Service
 
