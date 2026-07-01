@@ -2,10 +2,18 @@
 
 ## [Unreleased]
 
+No unreleased changes.
+
+## [v1.2.0] - 2026-06-30
+
 ### Added
 
 - Add delegated Winlogbeat ZIP download mode for air-gapped controllers, allowing a separate download host to fetch the artifact before it is copied to Windows targets.
 - Support Windows hosts as delegated Winlogbeat download hosts by using Windows modules when the delegate uses WinRM/PSRP or `winlogbeat_download_delegate_platform: windows` is set.
+
+### Changed
+
+- Clarify delegated download documentation for air-gapped controllers and production-tested Windows delegated download hosts.
 
 ## [v1.1.1] - 2026-06-30
 

@@ -97,7 +97,7 @@ winlogbeat_download_delegate_cache_dir: /var/cache/ansible/winlogbeat
 winlogbeat_controller_cache_dir: /var/tmp/ansible-winlogbeat-cache
 ```
 
-Delegates can be POSIX or Windows hosts. Auto-detection treats WinRM/PSRP delegates as Windows. For Windows delegates, use `winlogbeat_download_delegate_platform: windows` when inventory connection detection is ambiguous and use a Windows cache path such as `C:\Windows\Temp\winlogbeat-delegate`.
+Delegates can be POSIX or Windows hosts. Auto-detection treats WinRM/PSRP delegates as Windows. For Windows delegates, use `winlogbeat_download_delegate_platform: windows` when inventory connection detection is ambiguous and use a Windows cache path such as `C:\Windows\Temp\winlogbeat-delegate`. This path is production-tested and prevents Ansible from trying to run POSIX/Python modules through PowerShell on a Windows delegate.
 
 Delegated mode flow:
 
